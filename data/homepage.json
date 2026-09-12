@@ -1,0 +1,52 @@
+{
+  "$schema": "vrj-cms/page-v1",
+  "page": {
+    "slug": "/",
+    "title": "VR Junior College | Best Junior College in Hyderabad",
+    "seoTitle": "VR Junior College | Best Junior College in Hyderabad",
+    "seoDescription": "Hyderabad’s leading residential junior college for MPC & BiPC. Intermediate education with expert IIT-JEE and NEET coaching, personal mentorship and campuses across Hyderabad.",
+    "template": "home"
+  },
+  "globals": {
+    "brandName": "VR Junior College",
+    "tagline": "Vision Into Reality",
+    "logo": "assets/img/brand/logo.png",
+    "phonePrimary": "+91 89298 28498",
+    "phoneSecondary": "+91 92569 25643",
+    "email": "info@vrjuniorcollege.in",
+    "emailAlt": "info@vrjuniorcollege.com",
+    "whatsapp": "15559412484",
+    "hours": "Mon – Sun: 10 am – 6 pm",
+    "headOffice": "Plot no: 30, Near SBI bank, Mathrusree Nagar, Hafeezpet, Miyapur, Telangana",
+    "brochure": "https://drive.google.com/file/d/1ObbqqmENMGtRyrQQIbtI8uGv4Qq_6arj/view",
+    "social": {
+      "facebook": "https://www.facebook.com/profile.php?id=61583046600673",
+      "instagram": "https://www.instagram.com/vr_junior.college/",
+      "linkedin": "https://www.linkedin.com/company/vr-jr-college/",
+      "youtube": "https://www.youtube.com/@VR_Junior_College"
+    }
+  },
+  "sections": [
+    { "type": "AnnouncementBar", "enabled": true },
+    { "type": "Header", "enabled": true },
+    { "type": "Hero", "enabled": true },
+    { "type": "Marquee", "enabled": true },
+    { "type": "Pillars", "enabled": true },
+    { "type": "Stats", "enabled": true },
+    { "type": "About", "enabled": true },
+    { "type": "Programs", "enabled": true },
+    { "type": "WhyVR", "enabled": true },
+    { "type": "Approach", "enabled": true },
+    { "type": "Results", "enabled": true },
+    { "type": "Faculty", "enabled": true },
+    { "type": "Facilities", "enabled": true },
+    { "type": "Campuses", "enabled": true },
+    { "type": "Gallery", "enabled": true },
+    { "type": "Testimonials", "enabled": true },
+    { "type": "FAQ", "enabled": true },
+    { "type": "Blog", "enabled": true },
+    { "type": "AdmissionCTA", "enabled": true },
+    { "type": "Footer", "enabled": true }
+  ],
+  "notes": "Content sourced exclusively from vrjuniorcollege.com. This JSON is the CMS field map for Phase 2 — not a runtime renderer."
+}

@@ -1,0 +1,30 @@
+.DS_Store
+Thumbs.db
+*.log
+*.bak
+*~
+*.zip
+
+# Local / runtime
+config/database.local.php
+storage/installed.lock
+storage/logs/*
+storage/cache/*
+storage/backups/*
+storage/tmp/*
+storage/secrets/*
+!storage/logs/.gitkeep
+!storage/cache/.gitkeep
+!storage/backups/.gitkeep
+!storage/tmp/.gitkeep
+!storage/secrets/.htaccess
+
+# Uploads (keep placeholders only)
+public/uploads/**
+!public/uploads/.gitkeep
+!public/uploads/.htaccess
+
+# Accidental unzip leftovers
+app 2/
+app 3/
+HOSTINGER-VRJ/

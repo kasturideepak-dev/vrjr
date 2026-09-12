@@ -1,0 +1,1 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Server error</title></head><body><h1>Something went wrong</h1><p>Please try again shortly.</p></body></html>

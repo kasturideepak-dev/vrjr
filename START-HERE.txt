@@ -1,0 +1,16 @@
+HOSTINGER — upload this zip
+
+Already installed (vrj.cognizance360.com):
+1. File Manager → public_html/vrj
+2. Upload HOSTINGER-VRJ.zip
+3. Extract HERE (overwrite files)
+4. Do NOT run install.php again
+5. Do NOT delete the database
+6. Open the site and hard-refresh (Cmd+Shift+R)
+
+Fresh folder only:
+1. Extract so you see install.php, app, assets together
+2. Open /install.php and enter the database password
+
+Do not extract inside a second vrj folder.
+Do not upload this to vrjuniorcollege.com.

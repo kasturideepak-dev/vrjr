@@ -1,0 +1,15 @@
+DirectoryIndex index.php install.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^install/?$ install.php [L]
+  RewriteRule ^uploads/(.*)$ public/uploads/$1 [L]
+
+  RewriteRule ^ index.php [L]
+</IfModule>
