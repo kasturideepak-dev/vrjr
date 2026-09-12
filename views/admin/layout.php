@@ -76,14 +76,24 @@ $types = $postTypesNav ?? [];
     </div>
   </div>
   <div class="toast" id="toast"></div>
-  <div class="modal" id="media-picker">
+  <div class="modal" id="media-picker"<?= Auth::can('media.upload') ? ' data-can-upload="1"' : '' ?>>
     <div class="box glass">
       <div class="page-head">
         <h3>Media library</h3>
         <button class="btn-ghost" type="button" data-media-close>Close</button>
       </div>
+      <?php if (Auth::can('media.upload')): ?>
+        <div class="media-drop" data-media-drop>
+          <p>Drop images here or
+            <label class="btn-ghost btn-file">browse
+              <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" multiple data-media-upload>
+            </label>
+          </p>
+          <p class="hint">JPEG, PNG, WebP, GIF or PDF. Max 8 MB each.</p>
+        </div>
+      <?php endif; ?>
       <input type="search" data-media-search placeholder="Search by file name or alt text">
-      <p class="hint">Dimensions and file size are shown so you can avoid oversized images.</p>
+      <p class="hint">Click a file to use it. New uploads appear at the top.</p>
       <div class="media-grid"></div>
     </div>
   </div>

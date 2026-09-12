@@ -65,10 +65,26 @@ final class Content
             $content = json_decode($sec['content_json'] ?: '{}', true) ?: [];
             foreach ($fields as $f) {
                 $key = 's' . $sid . '_' . $f['k'];
+                $raw = $_POST[$key] ?? '';
+                if (is_array($raw)) {
+                    $raw = implode("\n", array_map(static fn ($v) => trim((string) $v), $raw));
+                }
+                $raw = trim((string) $raw);
                 if ($f['t'] === 'html') {
-                    $content[$f['k']] = Html::allowedHtml((string) ($_POST[$key] ?? ''));
+                    $content[$f['k']] = Html::allowedHtml($raw);
+                } elseif ($f['t'] === 'images') {
+                    $lines = [];
+                    foreach (preg_split("/\r\n|\n|\r/", $raw) ?: [] as $line) {
+                        $line = trim($line);
+                        if ($line !== '' && !preg_match('#^(javascript|data):#i', $line)) {
+                            $lines[] = $line;
+                        }
+                    }
+                    $content[$f['k']] = implode("\n", array_slice($lines, 0, 40));
+                } elseif ($f['t'] === 'image') {
+                    $content[$f['k']] = preg_match('#^(javascript|data):#i', $raw) ? '' : $raw;
                 } else {
-                    $content[$f['k']] = trim((string) ($_POST[$key] ?? ''));
+                    $content[$f['k']] = $raw;
                 }
             }
             $rawVis = $vis[$sid] ?? $sec['is_visible'];

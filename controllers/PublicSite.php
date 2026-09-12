@@ -267,6 +267,8 @@ final class PublicSite
             'breadcrumbs' => self::crumbs($page['title'], $path),
         ]);
         header('X-Frame-Options: SAMEORIGIN');
+        header('Cache-Control: private, no-cache, no-store, must-revalidate');
+        header('Pragma: no-cache');
         View::public('page', $ctx);
     }
 

@@ -130,13 +130,21 @@ final class AdminPages
             View::redirect('/admin/pages/' . $id . '/');
         }
         $slug = $slugIn === '/' ? '/' : Slug::uniquePage($slugIn, (int) $id);
+        $intent = Request::str('intent');
         $status = Request::str('status') ?: $page['status'];
+        if ($intent === 'publish') {
+            $status = 'published';
+        }
         if (!in_array($status, ['draft', 'published', 'scheduled', 'unpublished'], true)) {
             $status = $page['status'];
         }
         $scheduled = Request::str('scheduled_at') ?: null;
+        $title = Request::str('title');
+        if ($title === '') {
+            $title = (string) $page['title'];
+        }
         Database::update('pages', [
-            'title' => Request::str('title'),
+            'title' => $title,
             'slug' => $slug,
             'type' => Request::str('type') ?: $page['type'],
             'status' => $status,
@@ -152,21 +160,36 @@ final class AdminPages
         $seo = Content::seoFromRequest();
         $seo = Content::fillCanonical($seo, $slug === '/' ? '/' : $slug);
         Database::upsertSeo('page', (int) $id, $seo);
-        Content::snapshot('page', (int) $id, false, 'Draft saved');
-        Audit::log('page.updated', 'page', (int) $id);
+
+        $wantLive = $intent === 'publish' || $status === 'published';
+        $wentLive = false;
+        if ($wantLive && Auth::can('pages.publish')) {
+            Content::publish('page', (int) $id);
+            $wentLive = true;
+            $msg = 'Live page updated.';
+        } else {
+            Content::snapshot('page', (int) $id, false, 'Draft saved');
+            if ($wantLive && !Auth::can('pages.publish')) {
+                $msg = 'Saved as draft. You do not have permission to publish.';
+            } else {
+                $msg = 'Draft saved. Publish to make it live.';
+            }
+        }
+        Audit::log($wentLive ? 'page.published' : 'page.updated', 'page', (int) $id);
         $focus = Request::int('focus_sec');
         $back = '/admin/pages/' . $id . '/' . ($focus ? ('?sec=' . $focus) : '');
+        $publicPath = $slug === '/' ? '/' : path_url($slug);
         if (Request::str('after') === 'preview') {
             $url = Content::previewUrl('page', (int) $id, $slug === '/' ? '/' : $slug);
             if (Request::wantsJson()) {
-                View::json(['ok' => true, 'message' => 'Saved — opening preview.', 'redirect' => $url]);
+                View::json(['ok' => true, 'message' => 'Saved — opening preview.', 'redirect' => $url, 'live' => $wentLive]);
             }
             View::redirect($url);
         }
         if (Request::wantsJson()) {
-            View::json(['ok' => true, 'message' => 'Draft saved.', 'slug' => $slug]);
+            View::json(['ok' => true, 'message' => $msg, 'slug' => $slug, 'live' => $wentLive, 'public_url' => $publicPath]);
         }
-        View::flash('success', 'Draft saved.');
+        View::flash('success', $msg);
         View::redirect($back);
     }
 
@@ -241,11 +264,17 @@ final class AdminPages
     public static function publish(string $id): void
     {
         Auth::requirePerm('pages.publish');
+        if (!empty($_POST['section_id'])) {
+            $_POST['intent'] = 'publish';
+            $_POST['status'] = 'published';
+            self::save($id);
+            return;
+        }
         Content::publish('page', (int) $id);
         Audit::log('page.published', 'page', (int) $id);
         View::flash('success', 'Page published.');
         if (Request::wantsJson()) {
-            View::json(['ok' => true, 'message' => 'Published']);
+            View::json(['ok' => true, 'message' => 'Live page updated.', 'live' => true]);
         }
         View::redirect('/admin/pages/' . $id . '/');
     }

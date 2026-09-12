@@ -2,7 +2,9 @@
 declare(strict_types=1);
 
 /**
- * Hostinger one-page installer. Open https://vrj.cognizance360.com/install.php
+ * Hostinger one-page installer.
+ * Production: https://vrjuniorcollege.com/install.php
+ * Staging: https://vrj.cognizance360.com/install.php
  */
 $root = __DIR__;
 if (!is_dir($root . '/app') && is_dir(dirname($root) . '/app')) {
@@ -17,7 +19,8 @@ if (PHP_VERSION_ID < 80200) {
 
 $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
     || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
-$url = ($https ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'vrj.cognizance360.com');
+$httpHost = (string) ($_SERVER['HTTP_HOST'] ?? 'vrjuniorcollege.com');
+$url = ($https ? 'https://' : 'http://') . $httpHost;
 $h = static fn (string $s): string => htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 
 if (is_file($root . '/storage/installed.lock') && ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
@@ -25,8 +28,9 @@ if (is_file($root . '/storage/installed.lock') && ($_SERVER['REQUEST_METHOD'] ??
     exit;
 }
 
-$name = 'u223704158_vrjr';
-$user = 'u223704158_vrjruser';
+$dbPrefix = str_contains($httpHost, 'cognizance360.com') ? 'u223704158' : 'u625301217';
+$name = $dbPrefix . '_vrjr';
+$user = $dbPrefix . '_vrjruser';
 $pass = '';
 $err = '';
 
@@ -35,7 +39,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $user = trim((string) ($_POST['db_user'] ?? ''));
     $pass = (string) ($_POST['db_pass'] ?? '');
     if ($name === '' || $user === '' || $user === 'root') {
-        $err = 'Enter the Hostinger database name and user (starts with u223704158_), not root.';
+        $err = 'Enter the Hostinger database name and user (starts with ' . $dbPrefix . '_), not root.';
     } elseif ($pass === '') {
         $err = 'Enter the database password.';
     } else {

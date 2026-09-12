@@ -19,11 +19,11 @@ if ($focusSec && !in_array($focusSec, $ids, true) && $sections) {
   <div class="toolbar">
     <?php if (($page['status'] ?? '') === 'published'): ?>
       <a class="btn-ghost" href="<?= Html::e($publicPath ?? '/') ?>" target="_blank" rel="noopener">View page</a>
-    <?php endif; ?>
-    <?php if ($page['status'] === 'published'): ?>
       <form method="post" action="/admin/pages/<?= (int) $page['id'] ?>/unpublish/" data-confirm="Unpublish? Direct visits will 404."><?= Csrf::field() ?><button class="btn-ghost" type="submit">Unpublish</button></form>
     <?php endif; ?>
-    <form method="post" action="/admin/pages/<?= (int) $page['id'] ?>/publish/"><?= Csrf::field() ?><button class="btn" type="submit">Publish</button></form>
+    <?php if (Auth::can('pages.publish')): ?>
+      <button class="btn" type="submit" form="page-editor" name="intent" value="publish">Publish</button>
+    <?php endif; ?>
   </div>
 </div>
 <?php if (!empty($menuLinks)): ?>
@@ -114,6 +114,10 @@ if ($focusSec && !in_array($focusSec, $ids, true) && $sections) {
                   $name = $fname;
                   $label = $f['l'];
                   require ROOT . '/views/admin/partials/image-field.php';
+                elseif ($f['t'] === 'images'):
+                  $name = $fname;
+                  $label = $f['l'];
+                  require ROOT . '/views/admin/partials/images-field.php';
                 else: ?>
                   <label class="lab"><?= Html::e($f['l']) ?>
                     <?php if ($f['t'] === 'textarea' || $f['t'] === 'html'): ?>
@@ -138,8 +142,8 @@ if ($focusSec && !in_array($focusSec, $ids, true) && $sections) {
       <?php endforeach; ?>
     </div>
     <div class="pe-sticky-bar">
-      <button class="btn" type="submit" data-save>Save</button>
-      <button class="btn-ghost" type="submit" data-save-preview>Save &amp; preview</button>
+      <button class="btn" type="submit" name="intent" value="save" data-save><?= ($page['status'] ?? '') === 'published' ? 'Save &amp; update live' : 'Save draft' ?></button>
+      <button class="btn-ghost" type="submit" name="intent" value="save" data-save-preview>Save &amp; preview</button>
       <span class="hint" data-dirty-hint hidden>Unsaved changes</span>
     </div>
   </section>

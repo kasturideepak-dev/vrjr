@@ -44,7 +44,7 @@ $liveRotate = [
 ];
 $isHome = class_exists('Request') && Request::path() === '/';
 if ($isHome) {
-    if (count($slides) < 2) {
+    if (!$slides) {
         $slides = $liveSlides;
     }
     if (!$rotate) {
@@ -56,10 +56,10 @@ if ($isHome) {
     if ($highlight === '') {
         $highlight = 'Doctors & Engineers';
     }
-    if ($heading === '' || str_contains($heading, 'leading residential junior college')) {
+    if ($heading === '') {
         $heading = 'Where Doctors & Engineers Future Begin Their Journey';
     }
-    if (trim((string) ($c['lead'] ?? '')) === '' || str_contains((string) ($c['lead'] ?? ''), 'VR guides every student toward the right path')) {
+    if (trim((string) ($c['lead'] ?? '')) === '') {
         $c['lead'] = 'At VR Junior College, we combine Intermediate education with expert IIT-JEE and NEET coaching to help students achieve their dreams. With experienced faculty, personal mentorship, and a disciplined residential environment, we empower every student to excel academically and beyond.';
     }
     if (empty($c['cta2_label'])) {

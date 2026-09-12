@@ -21,9 +21,14 @@
     form.addEventListener("submit", function (e) {
       if (form.getAttribute("data-ajax") === "off") return;
       e.preventDefault();
+      form.querySelectorAll("[data-img-multi]").forEach(syncMulti);
       var fd = new FormData(form);
+      var submitter = e.submitter;
+      if (submitter && submitter.name && !fd.has(submitter.name)) {
+        fd.append(submitter.name, submitter.value);
+      }
       fd.append("ajax", "1");
-      var btn = form.querySelector("[type=submit]");
+      var btn = submitter && submitter.type === "submit" ? submitter : form.querySelector("[type=submit]");
       if (btn) btn.disabled = true;
       fetch(form.action || location.href, {
         method: "POST",
@@ -34,6 +39,11 @@
           if (btn) btn.disabled = false;
           if (j.redirect && !j.message) { location.href = j.redirect; return; }
           showToast(j.message || j.error || (j.ok ? "Saved" : "Could not save"), j.ok !== false);
+          if (j.ok) {
+            form.querySelectorAll(".pe-dirty").forEach(function (d) { d.hidden = true; });
+            var hint = form.querySelector("[data-dirty-hint]");
+            if (hint) hint.hidden = true;
+          }
           if (j.redirect && j.ok) setTimeout(function () { location.href = j.redirect; }, 400);
         })
         .catch(function () {
@@ -127,6 +137,81 @@
     });
   });
 
+  function esc(s) {
+    return String(s || "").replace(/[&<>"']/g, function (c) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+    });
+  }
+  function syncMulti(wrap) {
+    if (!wrap) return;
+    var ta = wrap.querySelector("textarea");
+    var list = wrap.querySelector("[data-img-multi-list]");
+    if (!ta || !list) return;
+    var paths = [].map.call(list.querySelectorAll("[data-path]"), function (el) {
+      return el.getAttribute("data-path") || "";
+    }).filter(Boolean);
+    ta.value = paths.join("\n");
+    ta.dispatchEvent(new Event("input", { bubbles: true }));
+    var empty = wrap.querySelector(".img-multi__empty");
+    if (empty) empty.hidden = paths.length > 0;
+  }
+  function addMultiPath(wrap, path) {
+    if (!wrap || !path) return;
+    var list = wrap.querySelector("[data-img-multi-list]");
+    if (!list) return;
+    if (list.querySelectorAll("[data-path]").length >= 40) {
+      showToast("Maximum 40 images on this field.", false);
+      return;
+    }
+    var fig = document.createElement("figure");
+    fig.className = "img-multi__item";
+    fig.draggable = true;
+    fig.setAttribute("data-path", path);
+    fig.innerHTML = '<img src="' + esc(path) + '" alt=""><button class="img-multi__x" type="button" data-img-multi-remove title="Remove">×</button>';
+    list.appendChild(fig);
+    syncMulti(wrap);
+  }
+  function setSinglePath(input, path) {
+    if (!input) return;
+    input.value = path || "";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    var wrap = input.closest("[data-img-field]");
+    if (!wrap) return;
+    var img = wrap.querySelector(".img-field__thumb img");
+    var empty = wrap.querySelector(".img-field__empty");
+    var pathEl = wrap.querySelector(".img-field__path");
+    var clear = wrap.querySelector("[data-img-clear]");
+    if (img) { img.src = path || ""; img.hidden = !path; }
+    if (empty) empty.hidden = !!path;
+    if (pathEl) {
+      pathEl.textContent = path ? path.split("/").pop() : "None selected";
+      pathEl.title = path || "";
+    }
+    if (clear) clear.hidden = !path;
+  }
+  function uploadFiles(fileList, done) {
+    var files = [].slice.call(fileList || []).filter(Boolean);
+    if (!files.length) { showToast("No file selected.", false); return; }
+    var fd = new FormData();
+    fd.append("_csrf", csrf);
+    fd.append("ajax", "1");
+    fd.append("folder", "page");
+    files.forEach(function (f) { fd.append("files[]", f); });
+    showToast("Uploading…", true);
+    fetch("/admin/media/", {
+      method: "POST",
+      body: fd,
+      headers: { "X-Requested-With": "XMLHttpRequest", "X-CSRF-Token": csrf, "Accept": "application/json" }
+    }).then(function (r) { return r.json().catch(function () { return { ok: false, error: "Upload failed" }; }); })
+      .then(function (j) {
+        var uploaded = j.files || [];
+        if (j.errors && j.errors.length) showToast(j.errors.join(" "), false);
+        else showToast(j.message || (uploaded.length ? "Uploaded" : "Upload failed"), j.ok !== false);
+        if (done) done(uploaded);
+      })
+      .catch(function () { showToast("Upload failed.", false); });
+  }
+
   var picker = document.getElementById("media-picker");
   var pickerRows = [];
   function renderPicker(q) {
@@ -141,34 +226,31 @@
       var dim = (m.width && m.height) ? (m.width + "×" + m.height) : "";
       var kb = m.size_bytes ? (Math.round(m.size_bytes / 1024) + " KB") : "";
       var src = (m.mime || "").indexOf("image/") === 0 ? m.public_path : "";
-      return '<figure data-pick="' + m.public_path + '">' +
-        (src ? '<img src="' + src + '" alt="">' : '<div class="empty">File</div>') +
-        '<figcaption>' + (m.original_name || "") + '<br>' + [dim, kb].filter(Boolean).join(" · ") + "</figcaption></figure>";
+      var path = m.public_path || "";
+      return '<figure data-pick="' + esc(path) + '">' +
+        (src ? '<img src="' + esc(src) + '" alt="">' : '<div class="empty">File</div>') +
+        "<figcaption>" + esc(m.original_name || "") + "<br>" + esc([dim, kb].filter(Boolean).join(" · ")) + "</figcaption></figure>";
     }).join("") || '<p class="empty">No matching files.</p>';
   }
   function applyPicked(path) {
+    if (!picker) return;
     var sel = picker.dataset.target;
+    var mode = picker.dataset.mode || "replace";
     var input = sel ? document.querySelector(sel) : null;
     if (!input) return;
-    input.value = path;
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-    var wrap = input.closest("[data-img-field]");
-    if (wrap) {
-      var img = wrap.querySelector("img");
-      var empty = wrap.querySelector(".img-field__empty");
-      var pathEl = wrap.querySelector(".img-field__path");
-      var clear = wrap.querySelector("[data-img-clear]");
-      if (img) { img.src = path; img.hidden = !path; }
-      if (empty) empty.hidden = !!path;
-      if (pathEl) pathEl.textContent = path ? path.split("/").pop() : "None selected";
-      if (clear) clear.hidden = !path;
+    if (mode === "append") {
+      var wrap = input.closest("[data-img-multi]");
+      addMultiPath(wrap, path);
+      return;
     }
+    setSinglePath(input, path);
   }
   document.body.addEventListener("click", function (e) {
     var t = e.target.closest("[data-media-open]");
     if (!t || !picker) return;
     e.preventDefault();
     picker.dataset.target = t.getAttribute("data-media-open");
+    picker.dataset.mode = t.getAttribute("data-media-mode") || "replace";
     picker.classList.add("is-on");
     fetch("/admin/media/?ajax=1", { headers: { "X-Requested-With": "XMLHttpRequest", "Accept": "application/json" } })
       .then(function (r) { return r.json(); })
@@ -186,17 +268,96 @@
       var fig = e.target.closest("[data-pick]");
       if (!fig) return;
       applyPicked(fig.getAttribute("data-pick"));
-      picker.classList.remove("is-on");
+      if ((picker.dataset.mode || "replace") !== "append") picker.classList.remove("is-on");
+    });
+    var drop = picker.querySelector("[data-media-drop]");
+    if (drop) {
+      ["dragenter", "dragover"].forEach(function (ev) {
+        drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("is-on"); });
+      });
+      drop.addEventListener("dragleave", function () { drop.classList.remove("is-on"); });
+      drop.addEventListener("drop", function (e) {
+        e.preventDefault();
+        drop.classList.remove("is-on");
+        uploadFiles(e.dataTransfer.files, function (uploaded) {
+          uploaded.slice().reverse().forEach(function (row) {
+            if (row && row.public_path) pickerRows.unshift(row);
+          });
+          renderPicker(qin ? qin.value : "");
+          if (!uploaded.length) return;
+          if ((picker.dataset.mode || "replace") === "append") {
+            uploaded.forEach(function (row) { applyPicked(row.public_path); });
+          } else {
+            applyPicked(uploaded[0].public_path);
+            picker.classList.remove("is-on");
+          }
+        });
+      });
+    }
+    var mediaIn = picker.querySelector("[data-media-upload]");
+    if (mediaIn) mediaIn.addEventListener("change", function () {
+      uploadFiles(mediaIn.files, function (uploaded) {
+        uploaded.slice().reverse().forEach(function (row) {
+          if (row && row.public_path) pickerRows.unshift(row);
+        });
+        renderPicker(qin ? qin.value : "");
+        mediaIn.value = "";
+        if (!uploaded.length) return;
+        if ((picker.dataset.mode || "replace") === "append") {
+          uploaded.forEach(function (row) { applyPicked(row.public_path); });
+        } else {
+          applyPicked(uploaded[0].public_path);
+          picker.classList.remove("is-on");
+        }
+      });
     });
   }
   document.body.addEventListener("click", function (e) {
     var c = e.target.closest("[data-img-clear]");
-    if (!c) return;
-    var wrap = c.closest("[data-img-field]");
-    if (!wrap) return;
-    var input = wrap.querySelector("input[id]");
-    if (input && picker) picker.dataset.target = "#" + input.id;
-    applyPicked("");
+    if (c) {
+      var wrap = c.closest("[data-img-field]");
+      if (wrap) setSinglePath(wrap.querySelector("input[id]"), "");
+    }
+    var rm = e.target.closest("[data-img-multi-remove]");
+    if (rm) {
+      var item = rm.closest("[data-path]");
+      var multi = rm.closest("[data-img-multi]");
+      if (item) item.remove();
+      syncMulti(multi);
+    }
+  });
+  document.body.addEventListener("change", function (e) {
+    var inp = e.target.closest("[data-img-upload]");
+    if (!inp || !inp.files || !inp.files.length) return;
+    var multi = inp.closest("[data-img-multi]");
+    var single = inp.closest("[data-img-field]");
+    uploadFiles(inp.files, function (uploaded) {
+      inp.value = "";
+      if (multi) uploaded.forEach(function (row) { if (row.public_path) addMultiPath(multi, row.public_path); });
+      else if (single && uploaded[0] && uploaded[0].public_path) setSinglePath(single.querySelector("input[id]"), uploaded[0].public_path);
+    });
+  });
+  document.querySelectorAll("[data-img-multi-list]").forEach(function (list) {
+    var drag;
+    list.addEventListener("dragstart", function (e) {
+      var item = e.target.closest(".img-multi__item");
+      if (!item) return;
+      drag = item;
+      item.classList.add("is-drag");
+    });
+    list.addEventListener("dragend", function () {
+      if (drag) drag.classList.remove("is-drag");
+      drag = null;
+      syncMulti(list.closest("[data-img-multi]"));
+    });
+    list.addEventListener("dragover", function (e) {
+      e.preventDefault();
+      var over = e.target.closest(".img-multi__item");
+      if (!drag || !over || drag === over) return;
+      var rect = over.getBoundingClientRect();
+      var before = (e.clientX - rect.left) < rect.width / 2;
+      list.insertBefore(drag, before ? over : over.nextSibling);
+    });
   });
 
   (function pageEditor() {

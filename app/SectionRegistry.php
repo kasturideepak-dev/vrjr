@@ -14,7 +14,7 @@ final class SectionRegistry
                 ['k' => 'rotate', 'l' => 'Rotating phrases (one per line)', 't' => 'textarea'],
                 ['k' => 'lead', 'l' => 'Description', 't' => 'textarea'],
                 ['k' => 'image', 'l' => 'Background image', 't' => 'image'],
-                ['k' => 'slides', 'l' => 'Slideshow images (one path per line)', 't' => 'textarea'],
+                ['k' => 'slides', 'l' => 'Slideshow images', 't' => 'images'],
                 ['k' => 'figure', 'l' => 'Portrait image', 't' => 'image'],
                 ['k' => 'cta_label', 'l' => 'Primary CTA', 't' => 'text'],
                 ['k' => 'cta_url', 'l' => 'Primary CTA URL', 't' => 'text'],
@@ -203,7 +203,7 @@ final class SectionRegistry
                 ['k' => 'bg', 'l' => 'Background (paper/white)', 't' => 'text'],
             ]],
             'gallery' => ['label' => 'Gallery grid', 'fields' => [
-                ['k' => 'images', 'l' => 'Image paths (one per line)', 't' => 'textarea'],
+                ['k' => 'images', 'l' => 'Images', 't' => 'images'],
             ]],
             'video' => ['label' => 'Video embed', 'fields' => [
                 ['k' => 'heading', 'l' => 'Heading', 't' => 'text'],
@@ -273,7 +273,7 @@ final class SectionRegistry
 
     public static function fieldGroup(array $f): string
     {
-        if (($f['t'] ?? '') === 'image' || in_array($f['k'] ?? '', ['image', 'figure', 'image_main', 'image_card', 'video_image', 'bg', 'shot1', 'shot2', 'shot3', 'images', 'og_image', 'slides'], true)) {
+        if (in_array($f['t'] ?? '', ['image', 'images'], true) || in_array($f['k'] ?? '', ['image', 'figure', 'image_main', 'image_card', 'video_image', 'bg', 'shot1', 'shot2', 'shot3', 'images', 'og_image', 'slides'], true)) {
             return 'media';
         }
         $k = $f['k'] ?? '';

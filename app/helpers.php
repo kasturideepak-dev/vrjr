@@ -39,7 +39,13 @@ function asset_url(string $path): string
 /** Admin CSS/JS. Lives in public/assets-admin; also copied to /assets-admin on Hostinger. */
 function admin_asset(string $path): string
 {
-    return '/assets-admin/' . ltrim($path, '/');
+    $path = ltrim($path, '/');
+    $file = ROOT . '/assets-admin/' . $path;
+    if (!is_file($file)) {
+        $file = ROOT . '/public/assets-admin/' . $path;
+    }
+    $v = is_file($file) ? filemtime($file) : time();
+    return '/assets-admin/' . $path . '?v=' . $v;
 }
 
 /**
