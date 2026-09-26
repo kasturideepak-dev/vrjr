@@ -358,8 +358,14 @@ final class PublicSite
              WHERE status = "published" AND deleted_at IS NULL AND id <> ? ORDER BY published_at DESC LIMIT 5',
             [(int) $post['id']]
         );
+        $faqs = Database::all(
+            'SELECT question, answer FROM faqs
+             WHERE entity_type = "blog" AND entity_id = ? AND is_visible = 1 ORDER BY sort_order, id',
+            [(int) $post['id']]
+        );
         View::public('post', self::ctx([
             'post' => $post,
+            'faqs' => $faqs,
             'seo' => $seo,
             'related' => $related,
             'categories' => $cats,

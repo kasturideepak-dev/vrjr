@@ -414,3 +414,11 @@ textarea { min-height: 96px; resize: vertical; }
   .admin-body { padding: 16px; }
   .admin-user span { display: none; }
 }
+
+/* Blog FAQ editor */
+.faq-editor { margin: 18px 0; padding: 14px 16px; border: 1px solid var(--line, #26303c); border-radius: 10px; }
+.faq-editor__head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.faq-editor__hint { font-size: 12px; opacity: 0.7; }
+.faq-editor__row { display: grid; grid-template-columns: 1fr 1.4fr auto; gap: 8px; align-items: start; margin-bottom: 8px; }
+.faq-editor__row input, .faq-editor__row textarea { width: 100%; }
+@media (max-width: 700px) { .faq-editor__row { grid-template-columns: 1fr; } }

@@ -33,6 +33,24 @@
     </div>
   </label>
   <label class="lab">Tags (comma separated) <input name="tags" value=""></label>
+
+  <div class="faq-editor">
+    <div class="faq-editor__head">
+      <strong>FAQs</strong>
+      <span class="faq-editor__hint">Shown as an accordion at the end of the post.</span>
+    </div>
+    <div data-faq-list data-proto='<div class="faq-editor__row"><input name="faq_question[]" placeholder="Question"><textarea name="faq_answer[]" rows="2" placeholder="Answer"></textarea><button type="button" class="btn-ghost" data-faq-remove>Remove</button></div>'>
+      <?php foreach (($faqs ?? []) as $f): ?>
+        <div class="faq-editor__row">
+          <input name="faq_question[]" placeholder="Question" value="<?= Html::e($f['question']) ?>">
+          <textarea name="faq_answer[]" rows="2" placeholder="Answer"><?= Html::e($f['answer']) ?></textarea>
+          <button type="button" class="btn-ghost" data-faq-remove>Remove</button>
+        </div>
+      <?php endforeach; ?>
+    </div>
+    <button type="button" class="btn-ghost" data-add-field="[data-faq-list]">+ Add FAQ</button>
+  </div>
+
   <?php $seo = $seo ?? []; require ROOT . '/views/admin/partials/seo.php'; ?>
   <button class="btn" type="submit">Save</button>
 </form>

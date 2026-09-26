@@ -20,6 +20,18 @@ require ROOT . '/views/public/_start.php';
     <article class="prose">
       <p class="article-meta"><?= $post['published_at'] ? Html::e(date('j M Y', strtotime($post['published_at']))) : '' ?> · <?= Html::e($post['author_name'] ?? 'VR Junior College') ?></p>
       <?= Html::allowedHtml($post['body_html'] ?? '') ?>
+      <?php if (!empty($faqs)): ?>
+      <hr>
+      <h2>Frequently asked questions</h2>
+      <div class="faq" data-faq data-faq-block>
+        <?php foreach ($faqs as $i => $f): ?>
+          <div class="faq__item <?= $i === 0 ? 'is-open' : '' ?>">
+            <h3><button class="faq__q" type="button" aria-expanded="<?= $i === 0 ? 'true' : 'false' ?>"><?= Html::e($f['question']) ?></button></h3>
+            <div class="faq__a"><p><?= nl2br(Html::e($f['answer'])) ?></p></div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+      <?php endif; ?>
     </article>
     <aside class="article-side">
       <h2>More from the blog</h2>

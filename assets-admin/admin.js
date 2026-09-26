@@ -137,6 +137,13 @@
     });
   });
 
+  document.addEventListener("click", function (e) {
+    var rm = e.target.closest ? e.target.closest("[data-faq-remove]") : null;
+    if (!rm) return;
+    var row = rm.closest(".faq-editor__row");
+    if (row) row.remove();
+  });
+
   function esc(s) {
     return String(s || "").replace(/[&<>"']/g, function (c) {
       return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];

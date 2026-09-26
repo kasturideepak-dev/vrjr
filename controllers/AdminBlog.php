@@ -27,6 +27,7 @@ final class AdminBlog
         $selectedCats = $row ? array_column(Database::all('SELECT category_id FROM blog_post_categories WHERE post_id = ?', [(int) $row['id']]), 'category_id') : [];
         $selectedTags = $row ? array_column(Database::all('SELECT tag_id FROM blog_post_tags WHERE post_id = ?', [(int) $row['id']]), 'tag_id') : [];
         $seo = $row ? (Database::one('SELECT * FROM seo_metadata WHERE entity_type="blog" AND entity_id=?', [(int) $row['id']]) ?: []) : [];
+        $faqs = $row ? Database::all('SELECT question, answer FROM faqs WHERE entity_type="blog" AND entity_id=? ORDER BY sort_order, id', [(int) $row['id']]) : [];
         View::admin('blog/form', [
             'title' => $row ? 'Edit post' : 'New post',
             'row' => $row,
@@ -35,6 +36,7 @@ final class AdminBlog
             'selectedCats' => $selectedCats,
             'selectedTags' => $selectedTags,
             'seo' => $seo,
+            'faqs' => $faqs,
         ]);
     }
 
@@ -84,6 +86,25 @@ final class AdminBlog
                 $tid = $tag ? (int) $tag['id'] : Database::insert('blog_tags', ['name' => $tn, 'slug' => $ts]);
                 Database::insert('blog_post_tags', ['post_id' => $id, 'tag_id' => $tid]);
             }
+        }
+        Database::delete('faqs', 'entity_type = ? AND entity_id = ?', ['blog', $id]);
+        $fq = $_POST['faq_question'] ?? [];
+        $fa = $_POST['faq_answer'] ?? [];
+        $order = 0;
+        foreach ((array) $fq as $k => $q) {
+            $q = trim((string) $q);
+            $a = trim((string) ($fa[$k] ?? ''));
+            if ($q === '' || $a === '') {
+                continue;
+            }
+            Database::insert('faqs', [
+                'question' => mb_substr($q, 0, 255),
+                'answer' => $a,
+                'entity_type' => 'blog',
+                'entity_id' => $id,
+                'sort_order' => ++$order,
+                'is_visible' => 1,
+            ]);
         }
         $seo = Content::seoFromRequest();
         $seo = Content::fillCanonical($seo, 'blog/' . $slug);
