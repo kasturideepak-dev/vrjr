@@ -97,6 +97,7 @@ $types = $postTypesNav ?? [];
       <div class="media-grid"></div>
     </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
   <script src="<?= Html::e(admin_asset('admin.js')) ?>"></script>
 </body>
 </html>

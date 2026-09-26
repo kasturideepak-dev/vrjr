@@ -21,6 +21,7 @@
     form.addEventListener("submit", function (e) {
       if (form.getAttribute("data-ajax") === "off") return;
       e.preventDefault();
+      if (window.tinymce) tinymce.triggerSave();
       form.querySelectorAll("[data-img-multi]").forEach(syncMulti);
       var fd = new FormData(form);
       var submitter = e.submitter;
@@ -143,6 +144,53 @@
     var row = rm.closest(".faq-editor__row");
     if (row) row.remove();
   });
+
+  /* WYSIWYG (TinyMCE) for [data-wysiwyg] textareas */
+  function initWysiwyg(el) {
+    if (!window.tinymce || !el || el.dataset.wysiwygReady) return;
+    if (!el.id) el.id = "wy_" + Math.random().toString(36).slice(2);
+    el.dataset.wysiwygReady = "1";
+    tinymce.init({
+      target: el,
+      skin: "oxide-dark",
+      content_css: "dark",
+      menubar: false,
+      branding: false,
+      promotion: false,
+      height: el.getAttribute("rows") ? Math.max(240, el.getAttribute("rows") * 24) : 360,
+      plugins: "lists link image table code autolink",
+      toolbar: "blocks | bold italic | bullist numlist | blockquote link image table | code removeformat",
+      block_formats: "Paragraph=p;Heading 2=h2;Heading 3=h3;Heading 4=h4",
+      valid_elements:
+        "@[class|style|id|title]," +
+        "p,br,h2,h3,h4,ul,ol,li,strong,b,em,i,a[href|target|rel]," +
+        "img[src|alt|width|height],blockquote,hr,span,div," +
+        "table,thead,tbody,tr,th[colspan|rowspan],td[colspan|rowspan]," +
+        "iframe[src|width|height|allow|allowfullscreen|frameborder]",
+      extended_valid_elements:
+        "iframe[src|width|height|allow|allowfullscreen|frameborder]",
+      convert_urls: false,
+      setup: function (ed) {
+        ed.on("change keyup", function () { ed.save(); });
+      }
+    });
+  }
+  function scanWysiwyg(scope) {
+    (scope || document).querySelectorAll("textarea[data-wysiwyg]").forEach(initWysiwyg);
+  }
+  if (window.tinymce) {
+    scanWysiwyg(document);
+    var mo = new MutationObserver(function (muts) {
+      muts.forEach(function (m) {
+        [].forEach.call(m.addedNodes, function (n) {
+          if (n.nodeType !== 1) return;
+          if (n.matches && n.matches("textarea[data-wysiwyg]")) initWysiwyg(n);
+          if (n.querySelectorAll) scanWysiwyg(n);
+        });
+      });
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
 
   function esc(s) {
     return String(s || "").replace(/[&<>"']/g, function (c) {

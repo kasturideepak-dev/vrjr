@@ -22,7 +22,7 @@
     <label class="lab">Publish date <input type="datetime-local" name="published_at" value="<?= Html::e(!empty($row['published_at']) ? date('Y-m-d\TH:i', strtotime($row['published_at'])) : '') ?>"></label>
   </div>
   <label class="lab">Excerpt <textarea name="excerpt"><?= Html::e($row['excerpt'] ?? '') ?></textarea></label>
-  <label class="lab">Body <textarea name="body_html" rows="12"><?= Html::e($row['body_html'] ?? '') ?></textarea></label>
+  <label class="lab">Body <textarea name="body_html" rows="12" data-wysiwyg><?= Html::e($row['body_html'] ?? '') ?></textarea></label>
   <label class="lab">Featured image <input name="featured_image" value="<?= Html::e($row['featured_image'] ?? '') ?>">
     <button class="btn-ghost" type="button" data-media-open="[name=featured_image]">Pick</button></label>
   <label class="lab">Categories

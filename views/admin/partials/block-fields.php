@@ -18,7 +18,7 @@ foreach ($fields as $f):
 ?>
   <label class="lab"><?= Html::e($f['l']) ?>
     <?php if ($f['t'] === 'textarea' || $f['t'] === 'html'): ?>
-      <textarea name="<?= Html::e($name) ?>"><?= Html::e($val) ?></textarea>
+      <textarea name="<?= Html::e($name) ?>"<?= $f['t'] === 'html' ? ' data-wysiwyg' : '' ?>><?= Html::e($val) ?></textarea>
     <?php else: ?>
       <input name="<?= Html::e($name) ?>" value="<?= Html::e($val) ?>">
     <?php endif; ?>

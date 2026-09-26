@@ -10,7 +10,7 @@
     <label class="lab">Duration <input name="duration" value="<?= Html::e($row['duration'] ?? '') ?>"></label>
   </div>
   <label class="lab">Summary <textarea name="summary"><?= Html::e($row['summary'] ?? '') ?></textarea></label>
-  <label class="lab">Body HTML <textarea name="body_html"><?= Html::e($row['body_html'] ?? '') ?></textarea></label>
+  <label class="lab">Body HTML <textarea name="body_html" data-wysiwyg><?= Html::e($row['body_html'] ?? '') ?></textarea></label>
   <label class="lab">Image path <input name="image_path" value="<?= Html::e($row['image_path'] ?? '') ?>"></label>
   <label class="lab">Order <input name="sort_order" value="<?= Html::e((string) ($row['sort_order'] ?? '0')) ?>"></label>
   <label class="lab">Status <select name="status"><option <?= ($row['status'] ?? '') === 'published' ? 'selected' : '' ?>>published</option><option <?= ($row['status'] ?? '') === 'draft' ? 'selected' : '' ?>>draft</option></select></label>

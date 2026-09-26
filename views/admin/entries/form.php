@@ -72,7 +72,7 @@ $mode = $type['template_mode'] ?? 'both';
     </label>
   <?php endif; ?>
   <?php if ((int) $type['supports_editor']): ?>
-    <label class="lab">Body <textarea name="body_html" rows="8"><?= Html::e($row['body_html'] ?? '') ?></textarea></label>
+    <label class="lab">Body <textarea name="body_html" rows="8" data-wysiwyg><?= Html::e($row['body_html'] ?? '') ?></textarea></label>
   <?php endif; ?>
 
   <?php if ($mode !== 'builder'): ?>
@@ -86,7 +86,7 @@ $mode = $type['template_mode'] ?? 'both';
         <?php if ($f['type'] === 'textarea'): ?>
           <textarea name="f_<?= Html::e($f['name']) ?>"><?= Html::e(is_array($val) ? implode("\n", $val) : (string) $val) ?></textarea>
         <?php elseif ($f['type'] === 'richtext'): ?>
-          <textarea name="f_<?= Html::e($f['name']) ?>" rows="8"><?= Html::e((string) $val) ?></textarea>
+          <textarea name="f_<?= Html::e($f['name']) ?>" rows="8" data-wysiwyg><?= Html::e((string) $val) ?></textarea>
         <?php elseif ($f['type'] === 'image'): ?>
           <input name="f_<?= Html::e($f['name']) ?>" value="<?= Html::e((string) $val) ?>">
           <button class="btn-ghost" type="button" data-media-open="[name='f_<?= Html::e($f['name']) ?>']">Pick</button>
@@ -152,7 +152,7 @@ $mode = $type['template_mode'] ?? 'both';
         ?>
           <label class="lab"><?= Html::e($f['l']) ?>
             <?php if ($f['t'] === 'textarea' || $f['t'] === 'html'): ?>
-              <textarea name="<?= Html::e($name) ?>"><?= Html::e($val) ?></textarea>
+              <textarea name="<?= Html::e($name) ?>"<?= $f['t'] === 'html' ? ' data-wysiwyg' : '' ?>><?= Html::e($val) ?></textarea>
             <?php else: ?>
               <input name="<?= Html::e($name) ?>" value="<?= Html::e($val) ?>">
             <?php endif; ?>
