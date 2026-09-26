@@ -170,6 +170,12 @@
       extended_valid_elements:
         "iframe[src|width|height|allow|allowfullscreen|frameborder]",
       convert_urls: false,
+      file_picker_types: "image",
+      file_picker_callback: function (cb) {
+        openMediaFor(function (path) {
+          if (path) cb(path, { alt: "" });
+        });
+      },
       setup: function (ed) {
         ed.on("change keyup", function () { ed.save(); });
       }
@@ -269,6 +275,24 @@
 
   var picker = document.getElementById("media-picker");
   var pickerRows = [];
+  var pickerCb = null;
+  function loadPickerRows() {
+    fetch("/admin/media/?ajax=1", { headers: { "X-Requested-With": "XMLHttpRequest", "Accept": "application/json" } })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        pickerRows = j.rows || [];
+        var q = picker.querySelector("[data-media-search]");
+        renderPicker(q ? q.value : "");
+      });
+  }
+  function openMediaFor(cb) {
+    if (!picker) return;
+    pickerCb = cb || null;
+    picker.dataset.target = "";
+    picker.dataset.mode = "callback";
+    picker.classList.add("is-on");
+    loadPickerRows();
+  }
   function renderPicker(q) {
     var grid = picker && picker.querySelector(".media-grid");
     if (!grid) return;
@@ -319,10 +343,21 @@
     var qin = picker.querySelector("[data-media-search]");
     if (qin) qin.addEventListener("input", function () { renderPicker(qin.value); });
     picker.addEventListener("click", function (e) {
-      if (e.target === picker || e.target.closest("[data-media-close]")) picker.classList.remove("is-on");
+      if (e.target === picker || e.target.closest("[data-media-close]")) {
+        picker.classList.remove("is-on");
+        pickerCb = null;
+        return;
+      }
       var fig = e.target.closest("[data-pick]");
       if (!fig) return;
-      applyPicked(fig.getAttribute("data-pick"));
+      var path = fig.getAttribute("data-pick");
+      if (pickerCb) {
+        var fn = pickerCb; pickerCb = null;
+        picker.classList.remove("is-on");
+        fn(path);
+        return;
+      }
+      applyPicked(path);
       if ((picker.dataset.mode || "replace") !== "append") picker.classList.remove("is-on");
     });
     var drop = picker.querySelector("[data-media-drop]");
@@ -340,6 +375,12 @@
           });
           renderPicker(qin ? qin.value : "");
           if (!uploaded.length) return;
+          if (pickerCb) {
+            var fn = pickerCb; pickerCb = null;
+            picker.classList.remove("is-on");
+            fn(uploaded[0].public_path);
+            return;
+          }
           if ((picker.dataset.mode || "replace") === "append") {
             uploaded.forEach(function (row) { applyPicked(row.public_path); });
           } else {
@@ -358,6 +399,12 @@
         renderPicker(qin ? qin.value : "");
         mediaIn.value = "";
         if (!uploaded.length) return;
+        if (pickerCb) {
+          var fn = pickerCb; pickerCb = null;
+          picker.classList.remove("is-on");
+          fn(uploaded[0].public_path);
+          return;
+        }
         if ((picker.dataset.mode || "replace") === "append") {
           uploaded.forEach(function (row) { applyPicked(row.public_path); });
         } else {
