@@ -12,6 +12,7 @@ $splitLines = static function (string $raw): array {
     return $out;
 };
 
+$hideBg = !empty($c['hide_background']);
 $slides = $splitLines((string) ($c['slides'] ?? ''));
 if (!$slides && !empty($c['image'])) {
     $slides = [(string) $c['image']];
@@ -44,7 +45,7 @@ $liveRotate = [
 ];
 $isHome = class_exists('Request') && Request::path() === '/';
 if ($isHome) {
-    if (!$slides) {
+    if (!$slides && !$hideBg) {
         $slides = $liveSlides;
     }
     if (!$rotate) {
@@ -67,7 +68,7 @@ if ($isHome) {
         $c['cta2_url'] = '/contact-us/';
     }
 }
-if (!$slides) {
+if (!$slides && !$hideBg) {
     $slides = [$asset . 'img/banner/hero-class.jpg'];
 }
 
@@ -129,10 +130,12 @@ $pct = static function (float $secs, float $total): string {
 <?php endif; ?>
 </style>
 <?php endif; ?>
-<section class="hero<?= $rotate ? ' hero--rotate' : '' ?><?= $slideN > 1 ? ' hero--slides' : '' ?>" id="top">
+<section class="hero<?= $rotate ? ' hero--rotate' : '' ?><?= $slideN > 1 ? ' hero--slides' : '' ?><?= $hideBg ? ' hero--plain' : '' ?>" id="top">
+  <?php if (!$hideBg && $slideN > 0): ?>
   <div class="hero-slides"<?php if ($slideN > 1): ?> data-hero-slides data-srcs="<?= Html::e(implode('|', $slides)) ?>"<?php endif; ?>>
     <img class="hero__photo is-on" src="<?= Html::e($slides[0]) ?>" alt="" width="1600" height="900" fetchpriority="high">
   </div>
+  <?php endif; ?>
   <div class="hero__shade"></div>
   <div class="container hero__inner">
     <div class="hero-stage">

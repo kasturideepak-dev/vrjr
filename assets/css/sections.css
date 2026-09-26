@@ -1831,3 +1831,9 @@
 @media (max-width: 639px) {
   .vt-grid { grid-template-columns: 1fr; }
 }
+
+.hero--plain {
+  background:
+    radial-gradient(1200px 600px at 78% 12%, rgba(58, 110, 165, 0.35) 0%, rgba(16, 48, 88, 0) 60%),
+    linear-gradient(135deg, #123a68 0%, var(--navy) 55%, #0a2440 100%);
+}
