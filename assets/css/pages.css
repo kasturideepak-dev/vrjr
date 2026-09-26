@@ -157,9 +157,9 @@ main { overflow-x: clip; }
   object-position: center 22%;
 }
 @media (max-width: 899px) {
-  .split-2 { grid-template-columns: 1fr; }
+  .split-2 { grid-template-columns: minmax(0, 1fr); }
   .split-photo,
-  .split-photo--wide { max-height: 360px; aspect-ratio: 16 / 10; }
+  .split-photo--wide { min-height: 0; max-height: 360px; aspect-ratio: 16 / 10; }
 }
 
 .feature-grid {
@@ -1350,8 +1350,9 @@ a.program-split__item { color: inherit; }
     aspect-ratio: 16 / 11;
   }
   .camp-hero__visual-photo { object-position: center 22%; }
+  .camp-hero--course .camp-hero__grid,
   .camp-hero--bipc .camp-hero__grid,
-  .camp-hero--neet .camp-hero__grid { grid-template-columns: 1fr; }
+  .camp-hero--neet .camp-hero__grid { grid-template-columns: minmax(0, 1fr); }
   .camp-hero--bipc .camp-hero__visual { order: 0; }
   .camp-hero--bipc .camp-hero__visual-photo { height: 220px; }
   .camp-hero--neet .camp-hero__visual {
