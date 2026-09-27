@@ -1981,3 +1981,7 @@
 .tracks-notes { text-align: center; color: var(--muted); font-size: 0.95rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; align-items: center; }
 .tracks-notes strong { color: var(--navy); font-weight: 700; }
 .tracks-notes span { color: var(--orange); }
+
+/* Tighten the gap below the tracks section (two paper sections in a row) */
+#tracks { padding-bottom: clamp(1.5rem, 3vw, 2.25rem); }
+#tracks + .section { padding-top: clamp(1.5rem, 3vw, 2.25rem); }
