@@ -1923,40 +1923,82 @@
 }
 @keyframes ceFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-/* ===== Program tracks (Vision 40 / Future 50) ===== */
-.tracks { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 3vw, 1.75rem); margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
-@media (max-width: 760px) { .tracks { grid-template-columns: 1fr; } }
-.track {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: clamp(1.5rem, 3vw, 2.25rem);
-  position: relative;
+/* ===== Program tracks — Vision 40 / Future 50 band ===== */
+.tracks-band {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 24px;
   overflow: hidden;
+  box-shadow: 0 26px 55px rgba(16, 48, 88, 0.16);
+  margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
 }
-.track::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 5px; }
-.track--a::before { background: var(--navy); }
-.track--b::before { background: var(--orange); }
-.track__badge {
-  display: inline-block;
+.tband {
+  position: relative;
+  padding: clamp(1.75rem, 3.4vw, 3rem);
+}
+.tband--vision {
+  background:
+    radial-gradient(140% 120% at 0 0, #eaf1ff 0%, #d7e5ff 60%, #cfe0ff 100%);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 44px) 100%, 0 100%);
+  padding-right: calc(clamp(1.75rem, 3.4vw, 3rem) + 44px);
+  z-index: 2;
+}
+.tband--future {
+  background:
+    radial-gradient(140% 120% at 100% 0, #fff0df 0%, #ffe1c6 60%, #ffd9b6 100%);
+  clip-path: polygon(44px 0, 100% 0, 100% 100%, 0 100%);
+  margin-left: -44px;
+  padding-left: calc(clamp(1.75rem, 3.4vw, 3rem) + 44px);
+}
+.tband__badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
   font-family: var(--display);
   font-weight: 800;
-  letter-spacing: 0.02em;
-  font-size: 0.95rem;
-  padding: 7px 16px;
-  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 1.05rem;
   color: #fff;
-  margin-bottom: 1rem;
+  padding: 9px 20px;
+  border-radius: 999px;
+  margin-bottom: 1.15rem;
 }
-.track--a .track__badge { background: var(--navy); }
-.track--b .track__badge { background: var(--orange); }
-.track__tagline { font-size: clamp(1.15rem, 2.4vw, 1.4rem); color: var(--navy); margin: 0 0 0.5rem; }
-.track__intro { color: var(--muted); margin: 0 0 1.25rem; }
-.track__meta { margin: 0; display: grid; gap: 0.9rem; }
-.track__meta div { display: grid; gap: 3px; }
-.track__meta dt { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--orange); }
-.track--a .track__meta dt { color: var(--navy); }
-.track__meta dd { margin: 0; color: var(--ink); }
+.tband--vision .tband__badge { background: var(--navy); box-shadow: 0 10px 22px rgba(16, 48, 88, 0.28); }
+.tband--future .tband__badge { background: var(--orange); box-shadow: 0 10px 22px rgba(232, 112, 40, 0.3); }
+.tband__badge b { font-weight: 800; }
+.tband--vision .tband__badge b { color: #7fb0ff; }
+.tband--future .tband__badge b { color: #ffd54a; }
+.tband__title {
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 2.9vw, 2.05rem);
+  line-height: 1.12;
+  color: var(--navy);
+  margin: 0 0 0.7rem;
+}
+.tband__title span { display: block; }
+.tband--vision .tband__title span { color: #2f6bd8; }
+.tband--future .tband__title span { color: var(--orange); }
+.tband__desc { color: #46566d; margin: 0 0 1.5rem; max-width: 36ch; }
+.tband__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.05rem; }
+.tband__list li { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
+.tband__ico {
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(16, 48, 88, 0.14);
+}
+.tband__ico svg { width: 22px; height: 22px; }
+.tband--vision .tband__ico { color: var(--navy); }
+.tband--future .tband__ico { color: var(--orange); }
+.tband__list strong { display: block; font-family: var(--display); font-size: 1.05rem; margin-bottom: 2px; }
+.tband--vision .tband__list strong { color: #2f6bd8; }
+.tband--future .tband__list strong { color: var(--orange); }
+.tband__list p { margin: 0; color: #46566d; font-size: 0.94rem; line-height: 1.5; }
+@media (max-width: 760px) {
+  .tracks-band { grid-template-columns: 1fr; border-radius: 20px; }
+  .tband--vision, .tband--future { clip-path: none; margin: 0; padding: clamp(1.5rem, 6vw, 2rem); }
+}
 
 .tracks-flow { text-align: center; margin-bottom: 1.4rem; }
 .tracks-flow__title { font-family: var(--display); font-weight: 700; color: var(--navy); margin: 0 0 1rem; }
