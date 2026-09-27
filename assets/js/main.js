@@ -480,3 +480,22 @@
     });
   });
 })();
+
+/* Faculty department tabs */
+(function () {
+  document.querySelectorAll("[data-faculty-tabs]").forEach(function (wrap) {
+    wrap.querySelectorAll("[data-fac-tab]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var i = btn.getAttribute("data-fac-tab");
+        wrap.querySelectorAll("[data-fac-tab]").forEach(function (b) {
+          var on = b === btn;
+          b.classList.toggle("is-active", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        wrap.querySelectorAll("[data-fac-panel]").forEach(function (p) {
+          p.classList.toggle("is-active", p.getAttribute("data-fac-panel") === i);
+        });
+      });
+    });
+  });
+})();

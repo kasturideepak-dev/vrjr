@@ -1,7 +1,6 @@
 <?php
 $people = Cpt::published('faculty');
 
-// Derive a department for each person: explicit field first, else parse the designation.
 $deriveDept = static function (array $p): string {
     $explicit = trim((string) Cpt::field($p, 'department'));
     if ($explicit !== '') {
@@ -24,13 +23,16 @@ foreach ($people as $p) {
     $groups[$deriveDept($p)][] = $p;
 }
 
-// Preferred display order; anything else follows alphabetically.
 $order = ['Leadership','Mathematics','Physics','Chemistry','Botany','Zoology','Biology','English','Commerce','Faculty'];
 uksort($groups, static function ($a, $b) use ($order) {
     $ia = array_search($a, $order, true); $ib = array_search($b, $order, true);
     $ia = $ia === false ? 999 : $ia; $ib = $ib === false ? 999 : $ib;
     return $ia === $ib ? strcmp($a, $b) : $ia - $ib;
 });
+
+$tabLabel = static function (string $dept): string {
+    return $dept === 'Leadership' ? 'Leadership' : ($dept === 'Faculty' ? 'Faculty' : $dept);
+};
 ?>
 <section class="section" id="faculty">
   <div class="container">
@@ -39,16 +41,22 @@ uksort($groups, static function ($a, $b) use ($order) {
       <a class="btn btn--ghost" href="/team-details/">See our experts</a>
     </div>
 
-    <div class="faculty-depts">
-      <?php foreach ($groups as $dept => $members): ?>
-        <div class="faculty-dept">
-          <h3 class="faculty-dept__name"><?= $dept === 'Leadership' ? 'Leadership &amp; Mentors' : ($dept === 'Faculty' ? 'Faculty' : 'Department of ' . Html::e($dept)) ?></h3>
+    <?php if ($groups): ?>
+    <div class="faculty-tabs" data-faculty-tabs>
+      <div class="faculty-tabs__nav" role="tablist" aria-label="Departments">
+        <?php $i = 0; foreach ($groups as $dept => $members): ?>
+          <button type="button" class="faculty-tab<?= $i === 0 ? ' is-active' : '' ?>" role="tab" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>" data-fac-tab="<?= $i ?>"><?= Html::e($tabLabel($dept)) ?> <span class="faculty-tab__count"><?= count($members) ?></span></button>
+        <?php $i++; endforeach; ?>
+      </div>
+
+      <?php $i = 0; foreach ($groups as $dept => $members): ?>
+        <div class="faculty-panel<?= $i === 0 ? ' is-active' : '' ?>" data-fac-panel="<?= $i ?>">
+          <p class="faculty-panel__name"><?= $dept === 'Leadership' ? 'Leadership &amp; Mentors' : ($dept === 'Faculty' ? 'Faculty' : 'Department of ' . Html::e($dept)) ?></p>
           <div class="faculty-dept__grid">
             <?php foreach ($members as $p):
               $img = $p['featured_image'] ?: (string) Cpt::field($p, 'image');
               $exp = (string) Cpt::field($p, 'experience');
               $desig = (string) Cpt::field($p, 'designation');
-              // For subject departments, drop the "Sr./Jr. X Faculty" label and show experience instead.
               $role = ($dept === 'Leadership' || $dept === 'Faculty') ? $desig : ($exp !== '' ? $exp . ' experience' : $desig);
             ?>
               <figure class="faculty">
@@ -61,7 +69,8 @@ uksort($groups, static function ($a, $b) use ($order) {
             <?php endforeach; ?>
           </div>
         </div>
-      <?php endforeach; ?>
+      <?php $i++; endforeach; ?>
     </div>
+    <?php endif; ?>
   </div>
 </section>
