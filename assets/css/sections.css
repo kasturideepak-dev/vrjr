@@ -1849,11 +1849,13 @@
   border-bottom: 2px solid var(--line);
 }
 .faculty-dept__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: clamp(1rem, 2.5vw, 1.6rem);
 }
-.faculty-dept .faculty { flex: none; width: auto; }
+.faculty-dept .faculty { flex: 0 0 220px; width: 220px; max-width: 220px; }
+.faculty-dept__grid figcaption { text-align: center; }
 .faculty h4 { font-size: 1rem; margin: 0; color: var(--ink, #0f2f58); }
 .faculty__ph {
   width: 100%;
@@ -1873,6 +1875,7 @@
 .faculty-tabs__nav {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
   margin-bottom: 1.6rem;
   border-bottom: 1px solid var(--line);
@@ -1916,5 +1919,6 @@
   color: var(--navy);
   margin: 0 0 1.1rem;
   font-weight: 700;
+  text-align: center;
 }
 @keyframes ceFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
