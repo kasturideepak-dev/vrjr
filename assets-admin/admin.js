@@ -145,6 +145,118 @@
     if (row) row.remove();
   });
 
+  /* Menu builder */
+  (function () {
+    var root = document.querySelector("[data-menu-builder]");
+    if (!root) return;
+    var list = root.querySelector("[data-menu-list]");
+    var tpl = root.querySelector("[data-item-template]");
+    var bin = root.querySelector("[data-deleted-bin]");
+    var emptyMsg = root.querySelector("[data-menu-empty]");
+    var badges = { custom: "Custom link", page: "Page", cpt_archive: "Archive", cpt_entry: "Entry", blog_index: "Blog", blog_post: "Blog post" };
+    var objTypes = { page: "page", cpt_entry: "cpt", cpt_archive: "post_type", blog_post: "blog" };
+
+    function refreshEmpty() {
+      if (emptyMsg) emptyMsg.hidden = list.querySelectorAll("[data-item]").length > 0;
+    }
+    function refreshParents() {
+      var rows = [].slice.call(list.querySelectorAll("[data-item]"));
+      rows.forEach(function (row) {
+        var sel = row.querySelector("[data-parent-select]");
+        if (!sel) return;
+        var current = sel.getAttribute("data-current") || sel.value || "";
+        var html = '<option value="">Top level</option>';
+        rows.forEach(function (other) {
+          if (other === row) return;
+          var id = other.getAttribute("data-id");
+          if (!id || id === "0") return; // only saved items can be parents
+          var lbl = (other.querySelector(".menu-item__label") || {}).value || "Item";
+          html += '<option value="' + esc(id) + '">' + esc(lbl) + "</option>";
+        });
+        sel.innerHTML = html;
+        sel.value = current;
+      });
+    }
+    function addItem(opts) {
+      var node = tpl.content.firstElementChild.cloneNode(true);
+      node.setAttribute("data-id", "0");
+      node.querySelector("[name='item_id[]']").value = "0";
+      node.querySelector("[name='link_type[]']").value = opts.linkType || "custom";
+      node.querySelector("[name='object_type[]']").value = objTypes[opts.linkType] || "";
+      node.querySelector("[name='object_id[]']").value = opts.objectId || "";
+      node.querySelector("[name='url[]']").value = opts.url || "";
+      node.querySelector(".menu-item__label").value = opts.label || "";
+      node.querySelector(".menu-item__badge").textContent = badges[opts.linkType] || "Link";
+      list.appendChild(node);
+      bindRow(node);
+      refreshParents();
+      refreshEmpty();
+      node.querySelector(".menu-item__label").focus();
+    }
+
+    root.querySelectorAll("[data-add-btn]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var lt = btn.getAttribute("data-add-btn");
+        var sel = root.querySelector("[data-add-select='" + lt + "']");
+        if (!sel || !sel.value) { showToast("Pick an item first", false); return; }
+        var opt = sel.options[sel.selectedIndex];
+        addItem({ linkType: lt, objectId: sel.value, label: opt.getAttribute("data-label") || opt.text, url: opt.getAttribute("data-url") || "" });
+        sel.value = "";
+      });
+    });
+    var blogBtn = root.querySelector("[data-add-blog]");
+    if (blogBtn) blogBtn.addEventListener("click", function () {
+      addItem({ linkType: "blog_index", label: blogBtn.getAttribute("data-label") || "Blog", url: blogBtn.getAttribute("data-url") || "/blog/" });
+    });
+    var customBtn = root.querySelector("[data-add-custom]");
+    if (customBtn) customBtn.addEventListener("click", function () {
+      var l = root.querySelector("[data-custom-label]"), u = root.querySelector("[data-custom-url]");
+      if (!l.value.trim()) { showToast("Enter a label", false); return; }
+      addItem({ linkType: "custom", label: l.value.trim(), url: (u.value || "").trim() });
+      l.value = ""; u.value = "";
+    });
+
+    function bindRow(row) {
+      var rm = row.querySelector("[data-remove]");
+      if (rm) rm.addEventListener("click", function () {
+        var id = row.getAttribute("data-id");
+        if (id && id !== "0") {
+          var h = document.createElement("input");
+          h.type = "hidden"; h.name = "deleted[]"; h.value = id;
+          bin.appendChild(h);
+        }
+        row.remove();
+        refreshParents();
+        refreshEmpty();
+      });
+      var tog = row.querySelector("[data-active-toggle]");
+      var inp = row.querySelector("[data-active-input]");
+      if (tog && inp) tog.addEventListener("change", function () { inp.value = tog.checked ? "1" : "0"; });
+      var lbl = row.querySelector(".menu-item__label");
+      if (lbl) lbl.addEventListener("input", refreshParents);
+
+      // drag reorder
+      row.addEventListener("dragstart", function (e) {
+        if (e.target.closest("input, select, button, label")) { e.preventDefault(); return; }
+        row.classList.add("is-drag");
+        e.dataTransfer.effectAllowed = "move";
+      });
+      row.addEventListener("dragend", function () { row.classList.remove("is-drag"); });
+      row.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        var drag = list.querySelector(".is-drag");
+        if (!drag || drag === row) return;
+        var rect = row.getBoundingClientRect();
+        var before = (e.clientY - rect.top) < rect.height / 2;
+        list.insertBefore(drag, before ? row : row.nextSibling);
+      });
+    }
+
+    list.querySelectorAll("[data-item]").forEach(bindRow);
+    refreshParents();
+    refreshEmpty();
+  })();
+
   /* WYSIWYG (TinyMCE) for [data-wysiwyg] textareas */
   function initWysiwyg(el) {
     if (!window.tinymce || !el || el.dataset.wysiwygReady) return;

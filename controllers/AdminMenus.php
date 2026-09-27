@@ -31,48 +31,65 @@ final class AdminMenus
     {
         Auth::requirePerm('menus.edit');
         $menuId = Request::int('menu_id');
+
+        // Remove items the user deleted in the builder.
+        foreach (($_POST['deleted'] ?? []) as $delId) {
+            $delId = (int) $delId;
+            if ($delId > 0) {
+                Database::delete('menu_items', 'id = ? AND menu_id = ?', [$delId, $menuId]);
+            }
+        }
+
         $ids = $_POST['item_id'] ?? [];
         $labels = $_POST['label'] ?? [];
         $types = $_POST['link_type'] ?? [];
         $urls = $_POST['url'] ?? [];
         $oids = $_POST['object_id'] ?? [];
         $otypes = $_POST['object_type'] ?? [];
-        $orders = $_POST['sort_order'] ?? [];
         $parents = $_POST['parent_id'] ?? [];
         $actives = $_POST['is_active'] ?? [];
+
+        $defaultObjectType = static function (string $lt): ?string {
+            return match ($lt) {
+                'page' => 'page',
+                'cpt_entry' => 'cpt',
+                'cpt_archive' => 'post_type',
+                'blog_post' => 'blog',
+                default => null,
+            };
+        };
+
+        // Submit order == visual order, so the array index is the sort order.
         foreach ($ids as $i => $iid) {
+            $label = trim((string) ($labels[$i] ?? ''));
+            if ($label === '') {
+                continue; // skip empty rows
+            }
             $lt = (string) ($types[$i] ?? 'custom');
+            $ot = trim((string) ($otypes[$i] ?? '')) ?: $defaultObjectType($lt);
             $data = [
-                'label' => trim((string) ($labels[$i] ?? '')),
+                'label' => $label,
                 'url' => trim((string) ($urls[$i] ?? '')),
                 'link_type' => $lt,
-                'object_type' => trim((string) ($otypes[$i] ?? '')) ?: null,
+                'object_type' => $ot,
                 'object_id' => ($oids[$i] ?? '') === '' ? null : (int) $oids[$i],
-                'sort_order' => (int) ($orders[$i] ?? 0),
+                'sort_order' => $i,
                 'parent_id' => ($parents[$i] ?? '') === '' ? null : (int) $parents[$i],
-                'is_active' => isset($actives[(int) $iid]) ? 1 : 0,
+                'is_active' => (int) ($actives[$i] ?? 1) === 1 ? 1 : 0,
             ];
             if ((int) $iid) {
                 Database::update('menu_items', $data, 'id = ? AND menu_id = ?', [(int) $iid, $menuId]);
-            } elseif ($data['label'] !== '') {
+            } else {
                 $data['menu_id'] = $menuId;
                 Database::insert('menu_items', $data);
             }
         }
-        if (Request::str('new_label') !== '') {
-            Database::insert('menu_items', [
-                'menu_id' => $menuId,
-                'label' => Request::str('new_label'),
-                'url' => Request::str('new_url') ?: '/',
-                'link_type' => Request::str('new_link_type') ?: 'custom',
-                'object_type' => Request::str('new_object_type') ?: null,
-                'object_id' => Request::int('new_object_id') ?: null,
-                'sort_order' => 99,
-                'is_active' => 1,
-            ]);
-        }
+
         Cache::flush();
         Audit::log('menu.updated', 'menu', $menuId);
+        if (Request::wantsJson()) {
+            View::json(['ok' => true]);
+        }
         View::flash('success', 'Menu saved. Linked items follow slug changes automatically.');
         View::redirect('/admin/menus/?id=' . $menuId);
     }
