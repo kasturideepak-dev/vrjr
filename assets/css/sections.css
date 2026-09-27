@@ -1837,3 +1837,34 @@
     radial-gradient(1200px 600px at 78% 12%, rgba(58, 110, 165, 0.35) 0%, rgba(16, 48, 88, 0) 60%),
     linear-gradient(135deg, #123a68 0%, var(--navy) 55%, #0a2440 100%);
 }
+
+/* ===== Faculty by department ===== */
+.faculty-depts { display: flex; flex-direction: column; gap: clamp(1.75rem, 4vw, 2.75rem); }
+.faculty-dept__name {
+  font-family: var(--display);
+  font-size: clamp(1.05rem, 2.5vw, 1.4rem);
+  color: var(--navy);
+  margin: 0 0 1.1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--line);
+}
+.faculty-dept__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.6rem);
+}
+.faculty-dept .faculty { flex: none; width: auto; }
+.faculty h4 { font-size: 1rem; margin: 0; color: var(--ink, #0f2f58); }
+.faculty__ph {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #123a68, #0a2440);
+  color: #fff;
+  font-family: var(--display);
+  font-size: 2.6rem;
+}
+@media (max-width: 479px) { .faculty-dept__grid { grid-template-columns: 1fr 1fr; } }
