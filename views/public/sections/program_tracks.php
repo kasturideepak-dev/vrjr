@@ -21,8 +21,16 @@ $icons = [
 
     <?php if ($tracks): ?>
     <div class="tracks-band">
+      <?php
+      $spark = '<svg class="dec-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v5M12 17v5M2 12h5M17 12h5M5 5l3 3M16 16l3 3"/></svg>';
+      $decor = [
+        'vision' => '<svg class="dec dec-cap" viewBox="0 0 64 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"><path d="M4 16 32 6l28 10-28 10z"/><path d="M16 22v12c0 4 7 8 16 8s16-4 16-8V22"/><path d="M60 16v13"/></svg>' . $spark,
+        'future' => '<svg class="dec dec-target" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="30" cy="34" r="24"/><circle cx="30" cy="34" r="15"/><circle cx="30" cy="34" r="6"/><path d="M44 20 58 6M58 6h-9M58 6v9" stroke-linecap="round" stroke-linejoin="round"/></svg><svg class="dec dec-chart" viewBox="0 0 64 44" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 38 24 22l12 9L58 8"/><path d="M58 8h-9M58 8v9"/></svg>' . $spark,
+      ];
+      ?>
       <?php foreach ($tracks as $i => $t): $mod = $i === 0 ? 'vision' : 'future'; ?>
         <div class="tband tband--<?= $mod ?>">
+          <div class="tband__decor" aria-hidden="true"><?= $decor[$mod] ?></div>
           <span class="tband__badge"><?php $nm = (string) ($t['name'] ?? ''); if (preg_match('/^(.*?)(\s+\S+)$/', $nm, $mm)) { echo Html::e(trim($mm[1])) . ' <b>' . Html::e(trim($mm[2])) . '</b>'; } else { echo Html::e($nm); } ?></span>
           <?php if (!empty($t['tagline'])): ?>
             <h3 class="tband__title"><?= Html::e($t['tagline']) ?><?php if (!empty($t['tagline_accent'])): ?> <span><?= Html::e($t['tagline_accent']) ?></span><?php endif; ?></h3>
