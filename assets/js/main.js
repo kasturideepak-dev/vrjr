@@ -445,3 +445,38 @@
     });
   });
 })();
+
+/* Career explorer tabs (World of MPC) */
+(function () {
+  document.querySelectorAll("[data-career-explorer]").forEach(function (ex) {
+    ex.querySelectorAll("[data-ce-cat]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var ci = btn.getAttribute("data-ce-cat");
+        ex.querySelectorAll("[data-ce-cat]").forEach(function (b) {
+          var on = b === btn;
+          b.classList.toggle("is-active", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        ex.querySelectorAll("[data-ce-panel]").forEach(function (p) {
+          p.classList.toggle("is-active", p.getAttribute("data-ce-panel") === ci);
+        });
+      });
+    });
+    ex.querySelectorAll("[data-ce-career]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var key = btn.getAttribute("data-ce-career");
+        var ci = key.split("-")[0];
+        var panel = ex.querySelector('[data-ce-panel="' + ci + '"]');
+        if (!panel) return;
+        panel.querySelectorAll("[data-ce-career]").forEach(function (b) {
+          var on = b === btn;
+          b.classList.toggle("is-active", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        panel.querySelectorAll("[data-ce-detail]").forEach(function (d) {
+          d.classList.toggle("is-active", d.getAttribute("data-ce-detail") === key);
+        });
+      });
+    });
+  });
+})();

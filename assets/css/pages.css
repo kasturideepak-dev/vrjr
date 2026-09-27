@@ -1503,3 +1503,108 @@ a.program-split__item { color: inherit; }
   .campus-life-grid { grid-template-columns: 1fr; }
   .campus-spot--note { grid-column: auto; }
 }
+
+/* ===== Career explorer (World of MPC) ===== */
+.career-explorer {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.ce-fields {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  position: sticky;
+  top: 90px;
+}
+.ce-fields__title,
+.ce-careers__title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+.ce-field {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 1px solid transparent;
+  background: var(--paper, #f4f6fb);
+  color: var(--navy);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.98rem;
+  padding: 13px 16px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.ce-field:last-child { margin-bottom: 0; }
+.ce-field:hover { background: #e9eef7; }
+.ce-field.is-active {
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(16, 48, 88, 0.22);
+}
+.ce-main { min-width: 0; }
+.ce-panel { display: none; }
+.ce-panel.is-active { display: block; }
+.ce-careers {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+.ce-careers__tabs { display: flex; flex-wrap: wrap; gap: 10px; }
+.ce-career {
+  flex: 1 1 auto;
+  min-width: 120px;
+  text-align: center;
+  border: 1px solid var(--line);
+  background: var(--paper, #f4f6fb);
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 13px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.ce-career:hover { background: #e9eef7; }
+.ce-career.is-active {
+  background: var(--orange);
+  color: #fff;
+  border-color: var(--orange);
+  box-shadow: 0 10px 24px rgba(232, 112, 40, 0.28);
+}
+.ce-detail { display: none; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: clamp(20px, 3vw, 32px); }
+.ce-detail.is-active { display: block; animation: ceFade 0.35s var(--ease, ease); }
+@keyframes ceFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.ce-detail__title { font-size: clamp(1.5rem, 3vw, 2rem); color: var(--navy); margin: 0 0 18px; }
+.ce-detail__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.ce-stat { background: var(--paper, #f4f6fb); border-radius: 12px; padding: 14px 16px; }
+.ce-stat span { display: block; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.ce-stat strong { font-family: var(--display); font-size: 1.1rem; color: var(--navy); }
+.ce-box { border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; border: 1px solid transparent; }
+.ce-box span { display: block; font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.ce-box p { margin: 0; color: var(--ink); font-weight: 600; }
+.ce-box--focus { background: #fff6e9; border-color: #f6e2c0; }
+.ce-box--paths { background: #eafaf0; border-color: #c7ebd4; }
+.ce-box--salary { background: #eef3fc; border-color: #cfe0f6; }
+.ce-box:last-child { margin-bottom: 0; }
+@media (max-width: 860px) {
+  .career-explorer { grid-template-columns: 1fr; }
+  .ce-fields { position: static; display: flex; flex-wrap: wrap; gap: 8px; }
+  .ce-fields__title { flex: 1 0 100%; margin-bottom: 4px; }
+  .ce-field { width: auto; flex: 1 1 auto; margin-bottom: 0; text-align: center; }
+}
+@media (max-width: 520px) {
+  .ce-detail__grid { grid-template-columns: 1fr; }
+  .ce-career { flex-basis: 100%; }
+}

@@ -62,7 +62,7 @@ $wa = $s['whatsapp'] ?? '15559412484';
   <link rel="stylesheet" href="<?= $asset ?>css/base.css">
   <link rel="stylesheet" href="<?= $asset ?>css/components.css?v=mobile-1">
   <link rel="stylesheet" href="<?= $asset ?>css/sections.css?v=mobile-2">
-  <link rel="stylesheet" href="<?= $asset ?>css/pages.css?v=mobile-1">
+  <link rel="stylesheet" href="<?= $asset ?>css/pages.css?v=mpc-1">
   <?php if (!empty($s['schema_json'])): ?>
     <script type="application/ld+json"><?= $s['schema_json'] ?></script>
   <?php endif; ?>
