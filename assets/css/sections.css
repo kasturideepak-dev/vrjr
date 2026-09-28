@@ -2045,3 +2045,66 @@
   .dec-cap, .dec-chart { display: none; }
   .dec-target { width: 88px; opacity: 0.1; }
 }
+
+/* ===== Student journey milestones ===== */
+.journey-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 6px 2px 18px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+.journey-track::-webkit-scrollbar { height: 8px; }
+.journey-track::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+.jstep {
+  flex: 0 0 clamp(210px, 22vw, 250px);
+  scroll-snap-align: start;
+  transition-delay: var(--d);
+}
+.js .jstep.reveal { transform: translateY(18px); }
+.jstep__top { position: relative; height: 46px; margin-bottom: 14px; }
+.jstep__top::before {
+  content: ""; position: absolute; top: 21px; left: 0; right: 0; height: 3px;
+  background: var(--line); z-index: 0; border-radius: 2px;
+}
+.jstep:first-child .jstep__top::before { left: 50%; }
+.jstep:last-child .jstep__top::before { right: 50%; }
+.jstep__num {
+  position: relative; z-index: 1;
+  width: 46px; height: 46px; margin: 0 auto;
+  border-radius: 50%;
+  background: var(--jc); color: #fff;
+  display: grid; place-items: center;
+  font-family: var(--display); font-weight: 800; font-size: 1.05rem;
+  box-shadow: 0 8px 18px rgba(16, 48, 88, 0.18);
+  border: 3px solid #fff;
+}
+.jstep__bar {
+  background: var(--jc); color: #fff;
+  font-family: var(--display); font-weight: 700; font-size: 0.98rem;
+  text-align: center; line-height: 1.2;
+  padding: 12px 20px 12px 14px;
+  min-height: 58px;
+  display: grid; place-items: center;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+  border-radius: 10px 0 0 10px;
+  margin-bottom: 14px;
+}
+.jstep__list {
+  list-style: none; margin: 0; padding: 16px;
+  display: grid; gap: 10px;
+  background: color-mix(in srgb, var(--jc) 8%, #fff);
+  border: 1px solid color-mix(in srgb, var(--jc) 18%, #fff);
+  border-radius: 14px;
+}
+.jstep__list li {
+  position: relative; padding-left: 22px;
+  font-size: 0.9rem; line-height: 1.45; color: var(--ink);
+}
+.jstep__list li::before {
+  content: ""; position: absolute; left: 0; top: 6px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--jc);
+}
+@media (prefers-reduced-motion: reduce) { .js .jstep.reveal { transform: none; } }
