@@ -2048,19 +2048,15 @@
 
 /* ===== Student journey milestones ===== */
 .journey-track {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding: 6px 2px 18px;
-  scroll-snap-type: x proximity;
-  scrollbar-width: thin;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 22px 12px;
+  padding: 6px 2px 8px;
 }
-.journey-track::-webkit-scrollbar { height: 8px; }
-.journey-track::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
-.jstep {
-  flex: 0 0 clamp(210px, 22vw, 250px);
-  scroll-snap-align: start;
-}
+@media (max-width: 1100px) { .journey-track { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 720px) { .journey-track { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 420px) { .journey-track { grid-template-columns: 1fr; } }
+.jstep { min-width: 0; }
 .js .journey-track .jstep {
   opacity: 0;
   transform: translateY(28px);
@@ -2120,3 +2116,5 @@
   .js .journey-track .jstep .jstep__num,
   .js .journey-track .jstep .jstep__bar { opacity: 1; transform: none; transition: none; }
 }
+
+@media (max-width: 1100px) { .jstep__top::before { display: none; } }
