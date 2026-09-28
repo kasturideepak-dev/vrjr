@@ -2060,9 +2060,17 @@
 .jstep {
   flex: 0 0 clamp(210px, 22vw, 250px);
   scroll-snap-align: start;
-  transition-delay: var(--d);
 }
-.js .jstep.reveal { transform: translateY(18px); }
+.js .journey-track .jstep {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.js .journey-track .jstep.is-in { opacity: 1; transform: none; }
+.js .journey-track .jstep .jstep__num { transform: scale(0.4); transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.12s; }
+.js .journey-track .jstep.is-in .jstep__num { transform: scale(1); }
+.js .journey-track .jstep .jstep__bar { transform: translateX(-14px); opacity: 0; transition: opacity 0.45s var(--ease) 0.1s, transform 0.45s var(--ease) 0.1s; }
+.js .journey-track .jstep.is-in .jstep__bar { transform: none; opacity: 1; }
 .jstep__top { position: relative; height: 46px; margin-bottom: 14px; }
 .jstep__top::before {
   content: ""; position: absolute; top: 21px; left: 0; right: 0; height: 3px;
@@ -2107,4 +2115,8 @@
   width: 11px; height: 11px; border-radius: 50%;
   background: var(--jc);
 }
-@media (prefers-reduced-motion: reduce) { .js .jstep.reveal { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .js .journey-track .jstep,
+  .js .journey-track .jstep .jstep__num,
+  .js .journey-track .jstep .jstep__bar { opacity: 1; transform: none; transition: none; }
+}

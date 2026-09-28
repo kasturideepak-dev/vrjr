@@ -499,3 +499,40 @@
     });
   });
 })();
+
+/* Student journey — reveal steps one after another */
+(function () {
+  var track = document.querySelector("[data-journey]");
+  if (!track) return;
+  var steps = [].slice.call(track.querySelectorAll(".jstep"));
+  if (!steps.length) return;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || !("IntersectionObserver" in window)) {
+    steps.forEach(function (s) { s.classList.add("is-in"); });
+    return;
+  }
+  var played = false;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting || played) return;
+      played = true;
+      io.disconnect();
+      var canScroll = track.scrollWidth > track.clientWidth + 8;
+      steps.forEach(function (s, i) {
+        setTimeout(function () {
+          s.classList.add("is-in");
+          if (canScroll) {
+            var rel = s.getBoundingClientRect().left - track.getBoundingClientRect().left;
+            var target = track.scrollLeft + rel - 40;
+            if (target > track.scrollLeft + 40) track.scrollTo({ left: target, behavior: "smooth" });
+          }
+        }, i * 260);
+      });
+      // return the strip to the start after the sequence finishes
+      if (canScroll) {
+        setTimeout(function () { track.scrollTo({ left: 0, behavior: "smooth" }); }, steps.length * 260 + 900);
+      }
+    });
+  }, { threshold: 0.3 });
+  io.observe(track);
+})();
