@@ -519,6 +519,8 @@
       io.disconnect();
       var path = document.querySelector(".journey-path");
       if (path) path.classList.add("is-drawn");
+      var wrap = document.querySelector(".journey-wrap");
+      if (wrap) wrap.classList.add("is-walking");
       var canScroll = track.scrollWidth > track.clientWidth + 8;
       steps.forEach(function (s, i) {
         setTimeout(function () {

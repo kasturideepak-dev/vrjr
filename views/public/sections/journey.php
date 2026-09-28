@@ -65,6 +65,18 @@ $svgs = [
         </div>
       <?php endforeach; ?>
     </div>
+      <div class="journey-walker" aria-hidden="true">
+        <svg viewBox="0 0 40 54">
+          <ellipse cx="20" cy="51" rx="11" ry="3" fill="#0b2444" opacity=".12"/>
+          <rect x="17" y="36" width="5" height="14" rx="2.5" fill="#26364a"/>
+          <rect x="23" y="36" width="5" height="14" rx="2.5" fill="#2f4358"/>
+          <rect x="9" y="19" width="7" height="15" rx="3.5" fill="#12305a"/>
+          <rect x="14" y="17" width="15" height="20" rx="6" fill="currentColor"/>
+          <rect x="27" y="21" width="5" height="12" rx="2.5" fill="currentColor"/>
+          <circle cx="21" cy="10" r="7.5" fill="#f2c39c"/>
+          <path d="M13.5 9.5a7.5 7.5 0 0 1 15 0c0-3-3-5-7.5-5s-7.5 2-7.5 5z" fill="#2a2320"/>
+        </svg>
+      </div>
     </div>
     <?php endif; ?>
   </div>
