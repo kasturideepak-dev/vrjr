@@ -2118,3 +2118,11 @@
 }
 
 @media (max-width: 1100px) { .jstep__top::before { display: none; } }
+
+/* Journey milestone illustrations */
+.jstep__illus { height: 120px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 6px; }
+.jstep__illus img { max-height: 120px; max-width: 100%; width: auto; object-fit: contain; will-change: transform; }
+.js .jstep__illus img { animation: jfloat 4.5s ease-in-out infinite; animation-delay: var(--fd); }
+@keyframes jfloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@media (max-width: 1100px) { .jstep__illus { height: 128px; } .jstep__illus img { max-height: 128px; } }
+@media (prefers-reduced-motion: reduce) { .js .jstep__illus img { animation: none; } }
