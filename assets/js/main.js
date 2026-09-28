@@ -517,6 +517,8 @@
       if (!e.isIntersecting || played) return;
       played = true;
       io.disconnect();
+      var path = document.querySelector(".journey-path");
+      if (path) path.classList.add("is-drawn");
       var canScroll = track.scrollWidth > track.clientWidth + 8;
       steps.forEach(function (s, i) {
         setTimeout(function () {
