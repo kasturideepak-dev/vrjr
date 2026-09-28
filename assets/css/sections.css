@@ -2174,3 +2174,7 @@
   .journey-wrap.is-walking .journey-walker { animation: none; left: 92.9%; opacity: 1; }
   .journey-wrap.is-walking .journey-walker svg { animation: none; }
 }
+
+/* Tighten space below the journey section */
+#journey { padding-bottom: clamp(1.5rem, 3vw, 2.25rem); }
+#journey + .section { padding-top: clamp(1.75rem, 3.5vw, 2.75rem); }
