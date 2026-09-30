@@ -2180,61 +2180,46 @@
 #journey + .section { padding-top: clamp(1.75rem, 3.5vw, 2.75rem); }
 
 /* ===== Methodology roadmap (VR way) ===== */
-.roadmap { position: relative; max-width: 980px; margin: 0 auto; padding: 10px 0; }
-.roadmap__road {
-  position: absolute; left: 50%; top: 8px; bottom: 8px; width: 16px;
-  transform: translateX(-50%);
-  background: linear-gradient(#26313f, #1b2530);
-  border-radius: 10px; z-index: 0;
-  box-shadow: 0 10px 30px rgba(16, 48, 88, 0.18);
-}
-.roadmap__lane {
-  position: absolute; left: 50%; top: 0; bottom: 0; width: 3px;
-  transform: translateX(-50%);
-  background: repeating-linear-gradient(#fff 0 12px, transparent 12px 26px);
-  opacity: 0.85;
-}
-.js .roadmap__lane { animation: roadMarch 0.9s linear infinite; }
-@keyframes roadMarch { to { background-position: 0 26px; } }
+.roadmap { position: relative; max-width: 1040px; margin: 0 auto; padding: 20px 0; }
+.roadmap__svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: visible; }
+.rm-road { stroke: #26313f; stroke-width: 22; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 2.4s var(--ease); }
+.roadmap.is-drawn .rm-road { stroke-dashoffset: 0; }
+.rm-lane { stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 11 15; opacity: .85; }
+.js .roadmap.is-drawn .rm-lane { animation: roadMarch 1s linear infinite; }
+@keyframes roadMarch { to { stroke-dashoffset: -26; } }
 
-.rstep {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 96px 1fr;
-  align-items: center;
-  margin-bottom: 34px;
-}
-.rstep:last-child { margin-bottom: 0; }
-.rstep__node { grid-column: 2; justify-self: center; z-index: 1; }
-.rstep__ico {
-  width: 84px; height: 84px; border-radius: 50%;
-  display: grid; place-items: center;
-  background: #fff; color: var(--rc);
-  border: 5px solid var(--rc);
-  box-shadow: 0 12px 26px rgba(16, 48, 88, 0.2);
-}
-.rstep__ico svg { width: 42px; height: 42px; }
-.rstep__card { max-width: 40ch; }
-.rstep--left .rstep__card { grid-column: 1; text-align: right; justify-self: end; }
-.rstep--right .rstep__card { grid-column: 3; text-align: left; justify-self: start; }
-.rstep__card h3 { font-family: var(--display); font-size: clamp(1.05rem, 2.2vw, 1.3rem); color: var(--ink); margin: 0 0 0.5rem; line-height: 1.25; }
+.rstep { position: relative; z-index: 1; display: flex; margin-bottom: 4px; }
+.rstep--left { justify-content: flex-start; }
+.rstep--right { justify-content: flex-end; }
+.rstep__pair { display: flex; align-items: center; gap: 16px; width: min(40%, 440px); }
+.rstep--right .rstep__pair { flex-direction: row-reverse; }
+.rstep__node { flex: none; z-index: 1; }
+.rstep__ico { width: 88px; height: 88px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: var(--rc); border: 5px solid var(--rc); box-shadow: 0 12px 26px rgba(16, 48, 88, .2); }
+.rstep__ico svg { width: 44px; height: 44px; }
+.rstep__card { flex: 1; min-width: 0; }
+.rstep--left .rstep__card { text-align: right; }
+.rstep--right .rstep__card { text-align: left; }
+.rstep__card h3 { font-family: var(--display); font-size: clamp(1.05rem, 2.1vw, 1.28rem); color: var(--ink); margin: 0 0 .5rem; line-height: 1.25; }
 .rstep__key { color: var(--rc); }
-.rstep__card p { margin: 0; color: var(--muted); font-size: 0.96rem; line-height: 1.6; }
+.rstep__card p { margin: 0; color: var(--muted); font-size: .95rem; line-height: 1.6; }
 
-/* reveal from each side */
-.js .rstep.reveal { opacity: 0; transition: opacity 0.55s var(--ease), transform 0.55s var(--ease); transition-delay: var(--d); }
-.js .rstep--left.reveal { transform: translateX(-28px); }
-.js .rstep--right.reveal { transform: translateX(28px); }
+.js .rstep.reveal { opacity: 0; transition: opacity .55s var(--ease), transform .55s var(--ease); transition-delay: var(--d); }
+.js .rstep--left.reveal { transform: translateX(-26px); }
+.js .rstep--right.reveal { transform: translateX(26px); }
 .js .rstep.reveal.is-in { opacity: 1; transform: none; }
 
-@media (max-width: 760px) {
-  .roadmap { max-width: 100%; padding-left: 8px; }
-  .roadmap__road { left: 34px; }
-  .rstep { grid-template-columns: 68px 1fr; column-gap: 14px; margin-bottom: 26px; }
-  .rstep__node { grid-column: 1; justify-self: center; }
-  .rstep__ico { width: 60px; height: 60px; border-width: 4px; }
-  .rstep__ico svg { width: 30px; height: 30px; }
-  .rstep--left .rstep__card, .rstep--right .rstep__card { grid-column: 2; text-align: left; justify-self: start; max-width: none; }
-  .js .rstep--left.reveal, .js .rstep--right.reveal { transform: translateY(20px); }
+@media (max-width: 768px) {
+  .roadmap { max-width: 100%; }
+  .rstep, .rstep--left, .rstep--right { justify-content: flex-start; }
+  .rstep__pair { width: 100%; flex-direction: row !important; gap: 14px; }
+  .rstep__node { order: -1; }
+  .rstep__ico { width: 58px; height: 58px; border-width: 4px; }
+  .rstep__ico svg { width: 28px; height: 28px; }
+  .rstep--left .rstep__card, .rstep--right .rstep__card { text-align: left; }
+  .js .rstep--left.reveal, .js .rstep--right.reveal { transform: translateY(18px); }
 }
-@media (prefers-reduced-motion: reduce) { .js .roadmap__lane { animation: none; } .js .rstep.reveal { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .js .roadmap.is-drawn .rm-lane { animation: none; }
+  .rm-road { stroke-dashoffset: 0; transition: none; }
+  .js .rstep.reveal { opacity: 1; transform: none; }
+}

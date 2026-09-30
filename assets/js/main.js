@@ -540,3 +540,48 @@
   }, { threshold: 0.3 });
   io.observe(track);
 })();
+
+/* Methodology roadmap — draw the zig-zag road through the node centres */
+(function () {
+  var rm = document.querySelector("[data-roadmap]");
+  if (!rm) return;
+  var svg = rm.querySelector(".roadmap__svg");
+  if (!svg) return;
+
+  function center(n) {
+    var x = 0, y = 0, el = n;
+    while (el && el !== rm) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+    return [x + n.offsetWidth / 2, y + n.offsetHeight / 2];
+  }
+  function draw() {
+    var nodes = [].slice.call(rm.querySelectorAll(".rstep__node"));
+    if (!nodes.length) return;
+    var w = rm.offsetWidth, h = rm.offsetHeight;
+    svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+    var pts = nodes.map(center);
+    var d = "M " + pts[0][0] + " " + (pts[0][1] - 46);
+    pts.forEach(function (p) { d += " L " + p[0] + " " + p[1]; });
+    d += " L " + pts[pts.length - 1][0] + " " + (pts[pts.length - 1][1] + 46);
+    rm.querySelectorAll(".rm-road, .rm-lane").forEach(function (pa) { pa.setAttribute("d", d); });
+  }
+
+  draw();
+  window.addEventListener("load", draw);
+  var t;
+  window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(draw, 150); });
+
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        draw();
+        rm.classList.add("is-drawn");
+        io.disconnect();
+        setTimeout(draw, 900);
+      });
+    }, { threshold: 0.15 });
+    io.observe(rm);
+  } else {
+    rm.classList.add("is-drawn");
+  }
+})();

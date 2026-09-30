@@ -92,7 +92,7 @@
     </figure>
     <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label="Next image">›</button>
   </div>
-  <script src="<?= $asset ?>js/main.js?v=journey-walk-1" defer></script>
+  <script src="<?= $asset ?>js/main.js?v=roadmap-1" defer></script>
   <?php Snippets::emit('footer', $snippetCtx ?? []); ?>
 </body>
 </html>

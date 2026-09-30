@@ -21,19 +21,24 @@ $icons = [
 
     <?php if ($steps): ?>
     <div class="roadmap" data-roadmap>
-      <div class="roadmap__road" aria-hidden="true"><span class="roadmap__lane"></span></div>
+      <svg class="roadmap__svg" preserveAspectRatio="none" aria-hidden="true">
+        <path class="rm-road" pathLength="1" fill="none"/>
+        <path class="rm-lane" fill="none"/>
+      </svg>
       <?php foreach ($steps as $i => $s):
         $side = $i % 2 === 0 ? 'left' : 'right';
         $color = $s['color'] ?? ($i % 2 === 0 ? '#e87028' : '#12305a');
         $ic = $icons[$s['icon'] ?? ''] ?? $icons['book'];
       ?>
         <div class="rstep rstep--<?= $side ?> reveal" style="--rc: <?= Html::e($color) ?>; --d: <?= number_format($i * 0.05, 2) ?>s">
-          <div class="rstep__node">
-            <span class="rstep__ico"><svg viewBox="0 0 48 48" role="img" aria-hidden="true"><?= $ic ?></svg></span>
-          </div>
-          <div class="rstep__card">
-            <h3><span class="rstep__key"><?= Html::e($s['key'] ?? '') ?>:</span> <?= Html::e($s['title'] ?? '') ?></h3>
-            <p><?= Html::e($s['desc'] ?? '') ?></p>
+          <div class="rstep__pair">
+            <div class="rstep__card">
+              <h3><span class="rstep__key"><?= Html::e($s['key'] ?? '') ?>:</span> <?= Html::e($s['title'] ?? '') ?></h3>
+              <p><?= Html::e($s['desc'] ?? '') ?></p>
+            </div>
+            <div class="rstep__node">
+              <span class="rstep__ico"><svg viewBox="0 0 48 48" role="img" aria-hidden="true"><?= $ic ?></svg></span>
+            </div>
           </div>
         </div>
       <?php endforeach; ?>
