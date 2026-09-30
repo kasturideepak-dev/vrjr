@@ -13,7 +13,8 @@ if ($courseVariant === '' && $isCampaign && class_exists('Request')) {
         $courseVariant = 'mpc';
     }
 }
-$bodyClass = trim(($bodyClass ?? '') . ($isCampaign ? ' is-campaign' : '') . ($courseVariant !== '' ? ' course-' . $courseVariant : ''));
+$pageSlugClass = isset($page['slug']) ? 'page-' . preg_replace('/[^a-z0-9]+/', '-', strtolower(trim((string) $page['slug'], '/'))) : '';
+$bodyClass = trim(($bodyClass ?? '') . ($isCampaign ? ' is-campaign' : '') . ($courseVariant !== '' ? ' course-' . $courseVariant : '') . ($pageSlugClass !== '' && $pageSlugClass !== 'page-' ? ' ' . $pageSlugClass : ''));
 require ROOT . '/views/public/_start.php';
 foreach ($sections ?? [] as $sec) {
     $c = $sec['content'] ?? (json_decode($sec['content_json'] ?? '{}', true) ?: []);

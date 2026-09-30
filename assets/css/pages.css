@@ -1608,3 +1608,7 @@ a.program-split__item { color: inherit; }
   .ce-detail__grid { grid-template-columns: 1fr; }
   .ce-career { flex-basis: 100%; }
 }
+
+/* Tighter section rhythm on the World of MPC page */
+.page-world-of-mpc .section { padding-block: clamp(2.25rem, 4vw, 3.25rem); }
+.page-world-of-mpc .page-hero { padding-block: 0; }
