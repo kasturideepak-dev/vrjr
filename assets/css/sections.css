@@ -2176,8 +2176,8 @@
 }
 
 /* Tighten space below the journey section */
-#journey { padding-bottom: clamp(1.5rem, 3vw, 2.25rem); }
-#journey + .section { padding-top: clamp(1.75rem, 3.5vw, 2.75rem); }
+#methodology { padding-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+#methodology + .section { padding-top: clamp(1.75rem, 3.5vw, 2.75rem); }
 
 /* ===== Methodology roadmap (VR way) ===== */
 .roadmap { position: relative; max-width: 1040px; margin: 0 auto; padding: 20px 0; }
