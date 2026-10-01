@@ -2223,3 +2223,11 @@
   .rm-road { stroke-dashoffset: 0; transition: none; }
   .js .rstep.reveal { opacity: 1; transform: none; }
 }
+
+/* Programmes section — orange background */
+.programs-sec {
+  background: linear-gradient(160deg, #f4873a 0%, #e8701f 58%, #e2640f 100%);
+}
+.programs-sec .pill { background: rgba(255, 255, 255, 0.22); color: #fff; }
+.programs-sec .section-head h2 { color: #fff; }
+.programs-sec .section-head .lede { color: rgba(255, 255, 255, 0.92); }

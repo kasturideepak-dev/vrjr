@@ -1,7 +1,7 @@
 <?php
 $courses = Cpt::published('courses');
 ?>
-<section class="section bg-paper" id="programmes">
+<section class="section programs-sec" id="programmes">
   <div class="container">
     <div class="section-head is-center">
       <div>
