@@ -17,6 +17,9 @@ $pageSlugClass = isset($page['slug']) ? 'page-' . preg_replace('/[^a-z0-9]+/', '
 $bodyClass = trim(($bodyClass ?? '') . ($isCampaign ? ' is-campaign' : '') . ($courseVariant !== '' ? ' course-' . $courseVariant : '') . ($pageSlugClass !== '' && $pageSlugClass !== 'page-' ? ' ' . $pageSlugClass : ''));
 require ROOT . '/views/public/_start.php';
 foreach ($sections ?? [] as $sec) {
+    if (array_key_exists('is_visible', $sec) && (int) $sec['is_visible'] === 0) {
+        continue;
+    }
     $c = $sec['content'] ?? (json_decode($sec['content_json'] ?? '{}', true) ?: []);
     $type = $sec['type'] ?? '';
     $file = ROOT . '/views/public/sections/' . $type . '.php';
