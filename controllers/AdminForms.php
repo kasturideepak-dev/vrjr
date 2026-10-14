@@ -251,10 +251,52 @@ final class AdminForms
             }
             Database::update('form_submissions', ['sheets_synced' => $synced, 'sheets_error' => $err], 'id = ?', [$sid]);
         }
+        self::sheetWebhook($form, $fields, $payload);
         self::notify($form, $fields, $payload);
         $msg = trim((string) ($form['success_message'] ?? ''));
         $_SESSION['_form_thanks'] = $msg !== '' ? $msg : 'Thank you. Our admissions team will be in touch shortly.';
         View::redirect('/thank-you/');
+    }
+
+    /**
+     * Push a submission to a Google Sheet via an Apps Script web-app webhook.
+     * The URL is stored in settings (sheets_webhook_url). Failures are ignored;
+     * the local DB copy is always kept.
+     */
+    private static function sheetWebhook(array $form, array $fields, array $payload): void
+    {
+        $url = trim((string) Settings::get('sheets_webhook_url'));
+        if ($url === '' || stripos($url, 'https://') !== 0) {
+            return;
+        }
+        $labels = [];
+        foreach ($fields as $f) {
+            $labels[$f['name']] = $f['label'] ?: $f['name'];
+        }
+        $out = [];
+        foreach ($payload as $name => $val) {
+            $out[$labels[$name] ?? $name] = $val;
+        }
+        $data = [
+            'form' => $form['name'] ?? ($form['slug'] ?? ''),
+            'submitted_at' => date('Y-m-d H:i:s'),
+            'fields' => $out,
+        ];
+        try {
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_POST => true,
+                CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+                CURLOPT_POSTFIELDS => Html::json($data),
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_TIMEOUT => 12,
+            ]);
+            curl_exec($ch);
+            curl_close($ch);
+        } catch (Throwable $e) {
+            error_log('sheetWebhook: ' . $e->getMessage());
+        }
     }
 
     private static function verifyCaptcha(string $token): bool
