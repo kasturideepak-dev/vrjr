@@ -34,6 +34,10 @@
         </div>
         <label class="field"><select name="branch" required><option value="">Select branch</option><option>Miyapur - Hyderabad</option><option>Madhapur - Hyderabad</option><option>Chandanagar - Hyderabad</option></select></label>
         <label class="field"><textarea name="message" placeholder="Message"></textarea></label>
+        <?php $rcSite = class_exists('Settings') ? Settings::get('recaptcha_site') : ''; if ($rcSite !== ''): ?>
+          <div class="g-recaptcha" data-sitekey="<?= Html::e($rcSite) ?>" style="margin:2px 0 14px"></div>
+          <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <?php endif; ?>
         <button class="btn" type="submit">Consult today</button>
       </form>
     </div>
