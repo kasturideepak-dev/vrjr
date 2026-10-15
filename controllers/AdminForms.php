@@ -278,6 +278,7 @@ final class AdminForms
             $out[$labels[$name] ?? $name] = $val;
         }
         $data = [
+            'sheet' => trim((string) Settings::get('sheets_tab')),
             'form' => $form['name'] ?? ($form['slug'] ?? ''),
             'submitted_at' => date('Y-m-d H:i:s'),
             'fields' => $out,
